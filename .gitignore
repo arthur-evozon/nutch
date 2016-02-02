@@ -4,6 +4,7 @@ conf/hadoop-env.sh
 conf/slaves
 build/
 runtime/
+out/
 logs/
 *.iml
 .idea

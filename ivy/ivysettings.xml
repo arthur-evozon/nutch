@@ -26,6 +26,9 @@
           http://ibiblio.lsu.edu/main/pub/packages/maven2
           http://www.ibiblio.net/pub/packages/maven2
   -->
+  <property name="m2-pattern"
+      value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false" />
+      
   <property name="oss.sonatype.org" 
     value="http://oss.sonatype.org/content/repositories/releases/" 
     override="false"/>
@@ -65,11 +68,27 @@
       />
      
     <chain name="default" dual="true">
+      <filesystem name="local-maven2" m2compatible="true">
+          <artifact pattern="${m2-pattern}"/>
+            <ivy pattern="${m2-pattern}"/>
+      </filesystem>
+      <ibiblio name="central" m2compatible="true"/>
+
       <resolver ref="local"/>
       <resolver ref="maven2"/>
       <resolver ref="sonatype"/>
       <resolver ref="apache-snapshot"/>
     </chain>
+
+<!--
+    <chain name="tryLocal">
+      <filesystem name="local-maven2" m2compatible="true">
+          <artifact pattern="${m2-pattern}"/>
+            <ivy pattern="${m2-pattern}"/>
+      </filesystem>
+      <ibiblio name="central" m2compatible="true"/>
+    </chain>
+    -->
     <chain name="internal">
       <resolver ref="local"/>
     </chain>

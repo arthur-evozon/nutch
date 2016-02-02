@@ -17,10 +17,6 @@
 
 package org.apache.nutch.util.domain;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
@@ -39,13 +35,13 @@ import org.apache.nutch.crawl.CrawlStatus;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.TableUtil;
-import org.apache.nutch.util.TimingUtil;
-import org.apache.nutch.util.URLUtil;
+import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 
 /**
  * Extracts some very basic statistics about domains from the crawldb
@@ -108,8 +104,8 @@ public class DomainStatistics extends Configured implements Tool {
     Query<String, WebPage> query = store.newQuery();
     query.setFields(WebPage._ALL_FIELDS);
 
-    GoraMapper.initMapperJob(job, query, store, Text.class, LongWritable.class,
-        DomainStatisticsMapper.class, null, true);
+    GoraMapper.initMapperJob(job, query, Text.class, LongWritable.class,
+        DomainStatisticsMapper.class, true);
 
     FileOutputFormat.setOutputPath(job, new Path(outputDir));
 

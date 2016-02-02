@@ -16,10 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.host;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.gora.mapreduce.GoraReducer;
 import org.apache.gora.query.Query;
@@ -37,6 +33,10 @@ import org.apache.nutch.util.NutchJob;
 import org.apache.nutch.util.TableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Scans the web table and create host entries for each unique host.
@@ -103,8 +103,8 @@ public class HostDbUpdateJob implements Tool {
     query.setFields(StorageUtils.toStringArray(FIELDS)); // Note: pages without
                                                          // these fields are
                                                          // skipped
-    GoraMapper.initMapperJob(job, query, pageStore, Text.class, WebPage.class,
-        HostDbUpdateJob.Mapper.class, null, true);
+    GoraMapper.initMapperJob(job, query, Text.class, WebPage.class,
+        HostDbUpdateJob.Mapper.class, true);
 
     // === Reduce ===
     DataStore<String, Host> hostStore = StorageUtils.createWebStore(

@@ -330,8 +330,8 @@ public class WebTableReader extends NutchTool implements Tool {
         WebPage._ALL_FIELDS.length);
     query.setFields(fields);
 
-    GoraMapper.initMapperJob(job, query, store, Text.class, Text.class,
-        WebTableRegexMapper.class, null, true);
+    GoraMapper.initMapperJob(job, query, Text.class, Text.class,
+        WebTableRegexMapper.class, true);
 
     FileOutputFormat.setOutputPath(job, outFolder);
     job.setOutputFormatClass(TextOutputFormat.class);
@@ -560,8 +560,8 @@ public class WebTableReader extends NutchTool implements Tool {
         WebPage._ALL_FIELDS.length);
     query.setFields(fields);
 
-    GoraMapper.initMapperJob(currentJob, query, store, Text.class,
-        LongWritable.class, WebTableStatMapper.class, null, true);
+    GoraMapper.initMapperJob(currentJob, query, Text.class,
+        LongWritable.class, WebTableStatMapper.class, true);
 
     currentJob.setCombinerClass(WebTableStatCombiner.class);
     currentJob.setReducerClass(WebTableStatReducer.class);
