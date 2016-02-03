@@ -19,6 +19,7 @@ package org.apache.nutch.indexwriter.elastic;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+import java.net.InetSocketAddress;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,9 +38,9 @@ import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.settings.Settings.Builder;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
@@ -77,8 +78,8 @@ public class ElasticIndexWriter implements IndexWriter {
     host = job.get(ElasticConstants.HOST);
     port = job.getInt(ElasticConstants.PORT, 9300);
 
-    Builder settingsBuilder = ImmutableSettings.settingsBuilder().classLoader(
-        Settings.class.getClassLoader());
+
+    Builder settingsBuilder = Settings.settingsBuilder();
 
     BufferedReader reader = new BufferedReader(
         job.getConfResourceAsReader("elasticsearch.conf"));
@@ -104,8 +105,10 @@ public class ElasticIndexWriter implements IndexWriter {
 
     // Prefer TransportClient
     if (host != null && port > 1) {
-      client = new TransportClient(settings)
-          .addTransportAddress(new InetSocketTransportAddress(host, port));
+      TransportAddress address = new InetSocketTransportAddress(new InetSocketAddress(host, port));
+      client = TransportClient.builder().settings(settings).build().addTransportAddress(address);
+
+      //new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(host, port));
     } else if (clusterName != null) {
       node = nodeBuilder().settings(settings).client(true).node();
       client = node.client();
