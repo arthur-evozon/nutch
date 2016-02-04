@@ -50,7 +50,7 @@
        <library name="fontbox-1.8.10.jar"/>
        <library name="geoapi-3.0.0.jar"/>
        <library name="grib-4.5.5.jar"/>
-       <library name="guava-11.0.2.jar"/>
+       <library name="guava-18.0.jar"/>
        <library name="httpclient-4.2.6.jar"/>
        <library name="httpcore-4.2.5.jar"/>
        <library name="httpmime-4.2.6.jar"/>

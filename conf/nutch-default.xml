@@ -1271,7 +1271,7 @@
 <!-- elasticsearch index properties -->
 <property>
   <name>elastic.host</name>
-  <value></value>
+  <value>localhost</value>
   <description>The hostname to send documents to using TransportClient.
   Either host and port must be defined or cluster.
   </description>
