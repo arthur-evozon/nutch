@@ -106,6 +106,7 @@
     <dependency org="org.apache.gora" name="gora-compiler" rev="INVALID_GORA_VERSION" conf="*->default"/>
 
 
+
     <!-- Uncomment this to use SQL as Gora backend. It should be noted that the 
     gora-sql 0.1.1-incubating artifact is NOT compatable with gora-core 0.3. Users should 
     downgrade to gora-core 0.2.1 in order to use SQL as a backend however this is not suggested. -->
