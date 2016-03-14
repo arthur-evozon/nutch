@@ -99,11 +99,11 @@
     <!-- N.B. To use Gora SNAPSHOT's merely replace the 'ref' value with the SNAPSHOT version 
     and add changing="true" alongside the dependency declaration. An example has been
     provided for the gora-core dependency as below -->
-    <dependency org="org.apache.gora" name="gora-core" rev="invalid.gora.version" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-solr" rev="invalid.gora.version" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-hbase" rev="invalid.gora.version" conf="*->default" /> 
-    <dependency org="org.apache.gora" name="gora-compiler-cli" rev="invalid.gora.version" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-compiler" rev="invalid.gora.version" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-core" rev="69.99" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-solr" rev="69.99" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-hbase" rev="69.99" conf="*->default" /> 
+    <dependency org="org.apache.gora" name="gora-compiler-cli" rev="69.99" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-compiler" rev="69.99" conf="*->default"/>
 
 
     <!-- Uncomment this to use SQL as Gora backend. It should be noted that the 
