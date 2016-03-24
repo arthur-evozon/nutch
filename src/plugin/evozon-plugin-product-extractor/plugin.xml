@@ -22,7 +22,7 @@
    provider-name="evozon.com">
 
    <runtime>
-      <library name="product-extractor.jar">
+      <library name="evozon-plugin-product-extractor.jar">
          <export name="*"/>
       </library>
    </runtime>

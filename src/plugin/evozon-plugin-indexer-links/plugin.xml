@@ -22,7 +22,7 @@
     provider-name="nutch.org">
 
     <runtime>
-        <library name="links-extractor.jar">
+        <library name="evozon-plugin-links-extractor.jar">
             <export name="*"/>
         </library>
     </runtime>

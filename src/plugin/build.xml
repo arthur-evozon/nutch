@@ -158,5 +158,9 @@
         <ant dir="urlnormalizer-basic" target="clean"/>
         <ant dir="urlnormalizer-pass" target="clean"/>
         <ant dir="urlnormalizer-regex" target="clean"/>
+
+        <ant dir="evozon-plugin-indexer-links" target="clean"/>
+        <ant dir="evozon-plugin-product-extractor" target="clean"/>
+
     </target>
 </project>
