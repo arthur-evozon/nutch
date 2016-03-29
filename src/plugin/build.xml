@@ -64,7 +64,6 @@
         <ant dir="urlnormalizer-pass" target="deploy"/>
         <ant dir="urlnormalizer-regex" target="deploy"/>
 
-        <ant dir="evozon-plugin-indexer-links" target="deploy"/>
         <ant dir="evozon-plugin-product-extractor" target="deploy"/>
 
         <!--
@@ -159,7 +158,6 @@
         <ant dir="urlnormalizer-pass" target="clean"/>
         <ant dir="urlnormalizer-regex" target="clean"/>
 
-        <ant dir="evozon-plugin-indexer-links" target="clean"/>
         <ant dir="evozon-plugin-product-extractor" target="clean"/>
 
     </target>

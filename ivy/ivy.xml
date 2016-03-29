@@ -105,6 +105,10 @@
     <dependency org="org.apache.gora" name="gora-compiler-cli" rev="0.7-SNAPSHOT" conf="*->default"/>
     <dependency org="org.apache.gora" name="gora-compiler" rev="0.7-SNAPSHOT" conf="*->default"/>
 
+    <dependency org="org.jsoup" name="jsoup" rev="1.8.3" conf="*->default"/>
+    
+    <dependency org="net.sourceforge.htmlcleaner" name="htmlcleaner" rev="2.2" conf="*->default"/>
+    <dependency org="jaxen" name="jaxen" rev="1.1.4" conf="*->default"/>
 
     <!-- Uncomment this to use SQL as Gora backend. It should be noted that the 
     gora-sql 0.1.1-incubating artifact is NOT compatable with gora-core 0.3. Users should 

@@ -15,7 +15,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<project name="product-extractor" default="jar-core">
+<project name="evozon-plugin-product-extractor" default="jar-core">
 
   <import file="../build-plugin.xml"/>
 
