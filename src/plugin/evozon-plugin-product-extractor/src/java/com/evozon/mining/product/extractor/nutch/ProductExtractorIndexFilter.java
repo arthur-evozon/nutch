@@ -1,6 +1,6 @@
-package com.evozon.mining.product.extractor.nutch.indexing;
+package com.evozon.mining.product.extractor.nutch;
 
-import com.evozon.mining.product.extractor.nutch.parsing.TagExtractorParseFilter;
+import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 import org.apache.nutch.indexer.IndexingException;
@@ -17,7 +17,7 @@ import java.util.HashSet;
  * tag information stuffed into the ParseResult object by the parse
  * portion of this module.
  */
-public class TagExtractorIndexFilter implements IndexingFilter {
+public class ProductExtractorIndexFilter implements IndexingFilter {
 
 	private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
@@ -26,13 +26,13 @@ public class TagExtractorIndexFilter implements IndexingFilter {
 		FIELDS.add(WebPage.Field.TEXT);
 	}
 
-	private static final Logger LOGGER = Logger.getLogger(TagExtractorIndexFilter.class);
+	private static final Logger LOGGER = Logger.getLogger(ProductExtractorIndexFilter.class);
 
 	private Configuration conf;
 
 
 	public NutchDocument filter(NutchDocument doc, String url, WebPage page) throws IndexingException {
-		ByteBuffer productDefinition = page.getMetadata().get(TagExtractorParseFilter.PRODUCT_KEY);
+		ByteBuffer productDefinition = page.getMetadata().get(new Utf8(ProductExtractorParseFilter.PRODUCT_KEY));
 		if (productDefinition == null || productDefinition.remaining() == 0) {
 			return doc;
 		}
@@ -41,11 +41,11 @@ public class TagExtractorIndexFilter implements IndexingFilter {
 		// the addIndexBackendOptions method.
 		String productString = new String(productDefinition.array());
 		for (String tag : productString.split("\n")) {
-			LOGGER.debug("Adding tag: [" + tag + "] for URL: " + url.toString());
-			doc.add(TagExtractorParseFilter.PRODUCT_KEY, tag);
+			LOGGER.info("\n\t>>>> Adding product: [" + tag + "] for URL: " + url.toString());
+			doc.add(ProductExtractorParseFilter.PRODUCT_KEY, tag);
 		}
 
-		ByteBuffer productDetails = page.getMetadata().get(TagExtractorParseFilter.PRODUCT_DETAILS);
+		ByteBuffer productDetails = page.getMetadata().get(new Utf8(ProductExtractorParseFilter.PRODUCT_DETAILS));
 		if (productDetails == null || productDetails.remaining() == 0) {
 			return doc;
 		}
@@ -55,7 +55,7 @@ public class TagExtractorIndexFilter implements IndexingFilter {
 		String productDetailsString = new String(productDetails.array());
 		for (String tag : productDetailsString.split("\n")) {
 			LOGGER.trace("Adding tag: [" + tag + "] for URL: " + url.toString());
-			doc.add(TagExtractorParseFilter.PRODUCT_DETAILS, tag);
+			doc.add(ProductExtractorParseFilter.PRODUCT_DETAILS, tag);
 		}
 
 		return doc;
@@ -71,6 +71,6 @@ public class TagExtractorIndexFilter implements IndexingFilter {
 
 	@Override
 	public Collection<WebPage.Field> getFields() {
-		return FIELDS;
+		return null;
 	}
 }
