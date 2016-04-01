@@ -11,11 +11,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DocumentFragment;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -24,13 +27,16 @@ import java.util.*;
  * from the body of the document and sets it into the ParseResult object.
  */
 public class ProductExtractorParseFilter implements ParseFilter {
-	public static final String PRODUCT_KEY = "product-details";
+	public static final String PRODUCT_KEY = "product-name";
+	public static final String PRODUCT_PRICE = "product-price";
 	public static final String PRODUCT_DETAILS = "product-meta";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProductExtractorParseFilter.class);
 
+	public static final String PARSE_NAME_VALUE_SEPARATOR = "/";
 	public static final String NAME = "name";
-	public static final String PRICE = "price";
+	public static final String PRICE_WHOLE = "price-whole";
+	public static final String PRICE_PART = "price-part";
 	public static final String META = "meta";
 
 
@@ -45,7 +51,8 @@ public class ProductExtractorParseFilter implements ParseFilter {
 	private static final Collection<WebPage.Field> FIELDS = new HashSet<>();
 
 	static {
-		FIELDS.add(WebPage.Field.METADATA);
+		FIELDS.add(WebPage.Field.CONTENT);
+
 		try {
 			Properties p = new Properties();
 			p.load(ProductExtractorParseFilter.class.getResourceAsStream("parser-mappings.properties"));
@@ -56,7 +63,7 @@ public class ProductExtractorParseFilter implements ParseFilter {
 				for (int i = 0; i < values.length; i++) {
 					String value = values[i].trim();
 					if (StringUtils.isNotEmpty(value)) {
-						String[] mapping = value.split(":");
+						String[] mapping = value.split(PARSE_NAME_VALUE_SEPARATOR);
 						if (mapping != null && mapping.length == 2) {
 							Map<String, String> parseTokenMap = PRODUCT_PARSE_MAP.get(key.trim().toLowerCase());
 							if (parseTokenMap == null) {
@@ -95,17 +102,24 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 	@Override
 	public Parse filter(String url, WebPage page, Parse parse, HTMLMetaTags metaTags, DocumentFragment doc) {
-		String host = page.getBaseUrl().toString();
+		String host = null;
+		try {
+			URL u = new URL(url);
+			host = u.getHost();
+		} catch (MalformedURLException e) {
+			return parse;
+		}
 
-		LOG.debug("+ Loading parsers for {}", host);
+		LOG.trace("Loading parsers for {}", host);
 
-		Map<String, String> parserStrMap = PRODUCT_PARSE_MAP.get(host);
+		Map<String, String> parserStrMap = PRODUCT_PARSE_MAP.get(host.toLowerCase());
 		if (parserStrMap == null || parserStrMap.isEmpty()) {
 			return parse;
 		}
 
 		String nameParser = parserStrMap.get(NAME);
-		String priceParser = parserStrMap.get(PRICE);
+		String priceWholeParser = parserStrMap.get(PRICE_WHOLE);
+		String pricePartParser = parserStrMap.get(PRICE_PART);
 		String metaParser = parserStrMap.get(META);
 
 		if (StringUtils.isBlank(nameParser)) {
@@ -115,19 +129,30 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		LOG.trace("+++ Extracting product from URL: " + url);
 
 		Document document = Jsoup.parse(new String(page.getContent().array()));
+		String productName = extractText(document, nameParser);
+		if (StringUtils.isBlank(productName)) {
+			return parse;
+		}
 
-		StringBuilder productDefinition = new StringBuilder();
-		Elements productElement = document.select(nameParser);
-		if (productElement != null) {
-			for (Element element : productElement) {
-				for (Node child : element.childNodes()) {
-					if (productDefinition.length() > 0) {
-						productDefinition.append("\n");
-					}
+		String priceWhole = extractText(document, priceWholeParser).replaceAll("[^\\d.]", "");
+		String pricePart = extractText(document, pricePartParser).replaceAll("[^\\d.]", "");
+		if (StringUtils.isBlank(priceWhole)) {
+			return parse;
+		}
 
-					productDefinition.append(child.toString().trim());
-				}
+		Double price = null;
+		try {
+			if( StringUtils.isBlank(pricePart) ) {
+				pricePart = "0";
 			}
+
+			price = Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
+		} catch (NumberFormatException e) {
+			LOG.debug("Could not extract price from [{}.{}]", priceWhole, pricePart);
+		}
+
+		if (StringUtils.isBlank(productName) || price == null) {
+			return parse;
 		}
 
 		StringBuilder productDetails = new StringBuilder();
@@ -135,7 +160,6 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		if (productDetailsElement != null) {
 			for (Element element : productDetailsElement) {
 				for (Node child : element.childNodes()) {
-
 					String[] details = child.toString().split(",");
 					for (String detail : details) {
 						if (productDetails.length() > 0) {
@@ -147,11 +171,11 @@ public class ProductExtractorParseFilter implements ParseFilter {
 				}
 			}
 		}
+
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
-		if (productDefinition.length() > 0) {
-			LOG.debug("\n\t>>>>Storing product info [ " + productDefinition.toString() + " ]");
-			metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productDefinition.toString().getBytes()));
-		}
+		LOG.debug("\n\t>>>>Storing product info [ " + productName + " ]");
+		metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productName.toString().getBytes()));
+		metadata.put(new Utf8(PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
 
 		if (productDetails.length() > 0) {
 			metadata.put(new Utf8(PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.toString().getBytes()));
@@ -170,6 +194,33 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 	@Override
 	public Collection<WebPage.Field> getFields() {
-		return null;
+		return FIELDS;
+	}
+
+	private static String extractText(Document document, String selector) {
+		String ret = "";
+		Elements elements = document.select(selector);
+		if (elements != null && elements.size() > 0) {
+			Element element = elements.get(0);
+			for (Node child : element.childNodes()) {
+				ret = child.toString();
+				if (child instanceof TextNode) {
+					ret = ((TextNode) child).text();
+				}
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	public static byte[] toByteArray(double value) {
+		byte[] bytes = new byte[8];
+		ByteBuffer.wrap(bytes).putDouble(value);
+		return bytes;
+	}
+
+	public static double toDouble(byte[] bytes) {
+		return ByteBuffer.wrap(bytes).getDouble();
 	}
 }

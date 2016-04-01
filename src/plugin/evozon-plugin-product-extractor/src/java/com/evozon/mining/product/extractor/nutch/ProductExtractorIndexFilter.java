@@ -2,11 +2,12 @@ package com.evozon.mining.product.extractor.nutch;
 
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.log4j.Logger;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.storage.WebPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -18,7 +19,6 @@ import java.util.HashSet;
  * portion of this module.
  */
 public class ProductExtractorIndexFilter implements IndexingFilter {
-
 	private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
 	static {
@@ -26,7 +26,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		FIELDS.add(WebPage.Field.TEXT);
 	}
 
-	private static final Logger LOGGER = Logger.getLogger(ProductExtractorIndexFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProductExtractorIndexFilter.class);
 
 	private Configuration conf;
 
@@ -39,11 +39,19 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 
 		// add to the nutch document, the properties of the field are set in
 		// the addIndexBackendOptions method.
-		String productString = new String(productDefinition.array());
-		for (String tag : productString.split("\n")) {
-			LOGGER.info("\n\t>>>> Adding product: [" + tag + "] for URL: " + url.toString());
-			doc.add(ProductExtractorParseFilter.PRODUCT_KEY, tag);
+		String productName = new String(productDefinition.array());
+
+		ByteBuffer productPriceBytes = page.getMetadata().get(new Utf8(ProductExtractorParseFilter.PRODUCT_PRICE));
+		if (productPriceBytes == null || productPriceBytes.remaining() == 0) {
+			return doc;
 		}
+
+		double productPrice = ProductExtractorParseFilter.toDouble(productPriceBytes.array());
+		String priceStr = String.format( "%.2f", productPrice);
+
+		doc.add(ProductExtractorParseFilter.PRODUCT_KEY, productName);
+		doc.add(ProductExtractorParseFilter.PRODUCT_PRICE, priceStr);
+		LOG.info("\n\t>>>> Adding product: [ {} : {} ] for URL: {}", productName,priceStr, url.toString());
 
 		ByteBuffer productDetails = page.getMetadata().get(new Utf8(ProductExtractorParseFilter.PRODUCT_DETAILS));
 		if (productDetails == null || productDetails.remaining() == 0) {
@@ -54,7 +62,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		// the addIndexBackendOptions method.
 		String productDetailsString = new String(productDetails.array());
 		for (String tag : productDetailsString.split("\n")) {
-			LOGGER.trace("Adding tag: [" + tag + "] for URL: " + url.toString());
+			LOG.trace("Adding tag: [" + tag + "] for URL: " + url.toString());
 			doc.add(ProductExtractorParseFilter.PRODUCT_DETAILS, tag);
 		}
 
