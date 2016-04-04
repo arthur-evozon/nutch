@@ -33,7 +33,7 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProductExtractorParseFilter.class);
 
-	public static final String PARSE_NAME_VALUE_SEPARATOR = "/";
+	public static final String PARSE_KEY_SEPARATOR = "\\|";
 	public static final String NAME = "name";
 	public static final String PRICE_WHOLE = "price-whole";
 	public static final String PRICE_PART = "price-part";
@@ -59,22 +59,28 @@ public class ProductExtractorParseFilter implements ParseFilter {
 			Enumeration<?> keys = p.keys();
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();
-				String[] values = p.getProperty(key).split(",", -1);
-				for (int i = 0; i < values.length; i++) {
-					String value = values[i].trim();
-					if (StringUtils.isNotEmpty(value)) {
-						String[] mapping = value.split(PARSE_NAME_VALUE_SEPARATOR);
-						if (mapping != null && mapping.length == 2) {
-							Map<String, String> parseTokenMap = PRODUCT_PARSE_MAP.get(key.trim().toLowerCase());
-							if (parseTokenMap == null) {
-								parseTokenMap = new HashMap<>();
-								PRODUCT_PARSE_MAP.put(key.trim().toLowerCase(), parseTokenMap);
-							}
-
-							parseTokenMap.put(mapping[0].trim(), mapping[1].trim());
-						}
-					}
+				if (StringUtils.isBlank(key) || StringUtils.isBlank(p.getProperty(key))) {
+					LOG.error("Invalid config entry '{}:{}'", key, p.getProperty(key));
+					continue;
 				}
+
+				String[] keyPair = key.split(PARSE_KEY_SEPARATOR);
+				if (keyPair == null || keyPair.length != 2) {
+					LOG.error("Invalid config entry '{}:{}'", key, p.getProperty(key));
+					continue;
+				}
+
+				String host = keyPair[0].toLowerCase().trim();
+				String selectorKey = keyPair[1].toLowerCase().trim();
+
+				String selector = p.getProperty(key).trim();
+				Map<String, String> parseTokenMap = PRODUCT_PARSE_MAP.get(host);
+				if (parseTokenMap == null) {
+					parseTokenMap = new HashMap<>();
+					PRODUCT_PARSE_MAP.put(host, parseTokenMap);
+				}
+
+				parseTokenMap.put(selectorKey, selector);
 			}
 		} catch (Exception e) {
 			if (LOG.isErrorEnabled()) {
@@ -142,7 +148,7 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 		Double price = null;
 		try {
-			if( StringUtils.isBlank(pricePart) ) {
+			if (StringUtils.isBlank(pricePart)) {
 				pricePart = "0";
 			}
 
@@ -173,7 +179,7 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		}
 
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
-		LOG.debug("\n\t>>>>Storing product info [ " + productName + " ]");
+		LOG.debug("\n\t>>>> Storing product info [ " + productName + " ]");
 		metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productName.toString().getBytes()));
 		metadata.put(new Utf8(PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
 
