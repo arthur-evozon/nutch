@@ -134,7 +134,13 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 		LOG.trace("+++ Extracting product from URL: " + url);
 
+		long now = System.currentTimeMillis();
 		Document document = Jsoup.parse(new String(page.getContent().array()));
+
+		LOG.trace( "Content parsing duration: %sms", System.currentTimeMillis() - now );
+
+		now = System.currentTimeMillis();
+
 		String productName = extractText(document, nameParser);
 		if (StringUtils.isBlank(productName)) {
 			return parse;
@@ -160,6 +166,8 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		if (StringUtils.isBlank(productName) || price == null) {
 			return parse;
 		}
+
+		LOG.trace( "Full data extraction duration: %sms", System.currentTimeMillis() - now );
 
 		StringBuilder productDetails = new StringBuilder();
 		Elements productDetailsElement = document.select(metaParser);
