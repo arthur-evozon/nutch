@@ -6,8 +6,6 @@ build/
 runtime/
 out/
 logs/
-<<<<<<< Updated upstream
 *.iml
 .idea/
-.log
-/bin/
+
