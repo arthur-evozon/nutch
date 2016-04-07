@@ -51,8 +51,18 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		double productPrice = DefaultProductParser.toDouble(productPriceBytes.array());
 		String priceStr = String.format( "%.2f", productPrice);
 
+
+		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_CURRENCY));
+		if (productCurrencyBytes == null || productCurrencyBytes.remaining() == 0) {
+			return doc;
+		}
+
+		String productCurrency = new String(productCurrencyBytes.array());
+
 		doc.add(ProductParser.PRODUCT_KEY, productName);
 		doc.add(ProductParser.PRODUCT_PRICE, priceStr);
+		doc.add(ProductParser.PRODUCT_CURRENCY, productCurrency);
+
 		LOG.info("\n\t>>>> Adding product: [ {} : {} ] for URL: {}", productName,priceStr, url.toString());
 
 		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_DETAILS));

@@ -19,21 +19,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public abstract class DefaultProductParser implements ProductParser {
+/**
+ * Default {@link ProductParser} implementation
+ */
+public class DefaultProductParser implements ProductParser {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultProductParser.class);
-	private static Map<String, Map<String, String>> PRODUCT_PARSE_MAP = new HashMap<>();
+	Map<String, String> selectorMap = new HashMap<>();
 
-	private String host;
-
+	/**
+	 * The plugins typically would call this method in their static config loading process
+	 */
 	@Override
-	public String getHost() {
-		return host;
-	}
-
-	@Override
-	public void initializeParser(String host) {
-		this.host = host;
+	public void initializeParser() {
 
 		Properties p = new Properties();
 
@@ -47,16 +45,7 @@ public abstract class DefaultProductParser implements ProductParser {
 					continue;
 				}
 
-				String selectorKey = key.toLowerCase().trim();
-
-				String selector = p.getProperty(key).trim();
-				Map<String, String> parseTokenMap = PRODUCT_PARSE_MAP.get(host);
-				if (parseTokenMap == null) {
-					parseTokenMap = new HashMap<>();
-					PRODUCT_PARSE_MAP.put(host, parseTokenMap);
-				}
-
-				parseTokenMap.put(selectorKey, selector);
+				selectorMap.put(key.toLowerCase().trim(), p.getProperty(key).trim());
 			}
 		} catch (Exception e) {
 			if (LOG.isErrorEnabled()) {
@@ -65,23 +54,26 @@ public abstract class DefaultProductParser implements ProductParser {
 		}
 	}
 
+	/**
+	 * Default parsing implementation: by default this method would try to parse by extracting the
+	 * data by the configured selectors
+	 *
+	 * @param url  the url currently being parsed
+	 * @param page the page currently being parsed
+	 */
 	@Override
 	public void parse(String url, WebPage page) {
-		Map<String, String> parserStrMap = PRODUCT_PARSE_MAP.get(host.toLowerCase());
-		if (parserStrMap == null || parserStrMap.isEmpty()) {
+		String nameSelector = selectorMap.get(NAME);
+		String priceWholeSelector = selectorMap.get(PRICE_WHOLE);
+		String pricePartSelector = selectorMap.get(PRICE_PART);
+		String priceCurrencySelector = selectorMap.get(PRICE_CURRENCY);
+		String productDetailsSelector = selectorMap.get(META);
+
+		if (StringUtils.isBlank(nameSelector)) {
 			return;
 		}
 
-		String nameParser = parserStrMap.get(NAME);
-		String priceWholeParser = parserStrMap.get(PRICE_WHOLE);
-		String pricePartParser = parserStrMap.get(PRICE_PART);
-		String metaParser = parserStrMap.get(META);
-
-		if (StringUtils.isBlank(nameParser)) {
-			return;
-		}
-
-		LOG.trace("+++ Extracting product from URL: " + url);
+		LOG.trace("Extracting product from URL '{}'",url);
 
 		long now = System.currentTimeMillis();
 		Document document = Jsoup.parse(new String(page.getContent().array()));
@@ -90,15 +82,46 @@ public abstract class DefaultProductParser implements ProductParser {
 
 		now = System.currentTimeMillis();
 
-		String productName = extractText(document, nameParser);
+		String productName = parseProductName(url, page, document, nameSelector);
 		if (StringUtils.isBlank(productName)) {
 			return;
 		}
 
-		String priceWhole = extractText(document, priceWholeParser).replaceAll("[^\\d.]", "");
-		String pricePart = extractText(document, pricePartParser).replaceAll("[^\\d.]", "");
-		if (StringUtils.isBlank(priceWhole)) {
+		Double price = parseProductPrice(url,page,document, priceWholeSelector, pricePartSelector);
+		if (price == null) {
 			return;
+		}
+
+		String priceCurrency = parseProductPriceCurrency(url,page,document,priceCurrencySelector);
+		if( StringUtils.isBlank(priceCurrency)) {
+			return;
+		}
+
+		String productDetails = parseProductMeta(url,page,document,productDetailsSelector);
+
+		LOG.trace("Full data extraction duration: %sms", System.currentTimeMillis() - now);
+
+		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
+
+		metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productName.getBytes()));
+		metadata.put(new Utf8(PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
+		metadata.put(new Utf8(PRODUCT_CURRENCY), ByteBuffer.wrap(priceCurrency.getBytes()));
+		if (productDetails.length() > 0) {
+			metadata.put(new Utf8(PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
+		}
+
+		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ]",productName, price, priceCurrency );
+	}
+
+	String parseProductName(String url, WebPage page, Document document, String selector) {
+		return extractText(document, selector);
+	}
+
+	Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
+		String priceWhole = extractText(document, priceWholeSelector).replaceAll("[^\\d.]", "");
+		String pricePart = extractText(document, pricePartSelector).replaceAll("[^\\d.]", "");
+		if (StringUtils.isBlank(priceWhole)) {
+			return null;
 		}
 
 		Double price = null;
@@ -112,14 +135,16 @@ public abstract class DefaultProductParser implements ProductParser {
 			LOG.debug("Could not extract price from [{}.{}]", priceWhole, pricePart);
 		}
 
-		if (StringUtils.isBlank(productName) || price == null) {
-			return;
-		}
+		return price;
+	}
 
-		LOG.trace("Full data extraction duration: %sms", System.currentTimeMillis() - now);
+	String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
+		return extractText(document, selector);
+	}
 
+	String parseProductMeta(String url, WebPage page, Document document, String selector) {
 		StringBuilder productDetails = new StringBuilder();
-		Elements productDetailsElement = document.select(metaParser);
+		Elements productDetailsElement = document.select(selector);
 		if (productDetailsElement != null) {
 			for (Element element : productDetailsElement) {
 				for (Node child : element.childNodes()) {
@@ -135,27 +160,27 @@ public abstract class DefaultProductParser implements ProductParser {
 			}
 		}
 
-		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
-		LOG.debug("\n\t>>>> Storing product info [ " + productName + " ]");
-		metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productName.toString().getBytes()));
-		metadata.put(new Utf8(PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
-
-		if (productDetails.length() > 0) {
-			metadata.put(new Utf8(PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.toString().getBytes()));
-		}
+		return productDetails.toString();
 	}
 
-	private static String extractText(Document document, String selector) {
+	public static String extractText(Document document, String selector) {
+		return extractText(document, selector, 1);
+	}
+
+	public static String extractText(Document document, String selector, int nth) {
 		String ret = "";
 		Elements elements = document.select(selector);
-		if (elements != null && elements.size() > 0) {
+		if (elements != null && elements.size() > 0 ) {
 			Element element = elements.get(0);
 			for (Node child : element.childNodes()) {
 				ret = child.toString();
 				if (child instanceof TextNode) {
 					ret = ((TextNode) child).text();
 				}
-				break;
+
+				if( --nth <= 0 ) {
+					break;
+				}
 			}
 		}
 
