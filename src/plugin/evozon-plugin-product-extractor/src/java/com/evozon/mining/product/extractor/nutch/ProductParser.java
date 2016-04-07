@@ -3,16 +3,16 @@ package com.evozon.mining.product.extractor.nutch;
 import org.apache.nutch.storage.WebPage;
 
 public interface ProductParser {
-	public static final String PRODUCT_KEY = "product-name";
-	public static final String PRODUCT_PRICE = "product-price";
-	public static final String PRODUCT_CURRENCY = "product-currency";
-	public static final String PRODUCT_DETAILS = "product-meta";
+	static final String PRODUCT_KEY = "product-name";
+	static final String PRODUCT_PRICE = "product-price";
+	static final String PRODUCT_CURRENCY = "product-currency";
+	static final String PRODUCT_DETAILS = "product-meta";
 
-	static final String NAME = "name";
-	static final String PRICE_WHOLE = "price-whole";
-	static final String PRICE_PART = "price-part";
-	static final String PRICE_CURRENCY = "price-currency";
-	static final String META = "meta";
+	static final String NAME = "product-name";
+	static final String PRICE_WHOLE = "product-price-whole";
+	static final String PRICE_PART = "product-price-part";
+	static final String PRICE_CURRENCY = "product-price-currency";
+	static final String META = "product-meta";
 
 	/**
 	 * Initialization method for the parser: here the parser can load its configuration up
