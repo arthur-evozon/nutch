@@ -99,7 +99,7 @@ public class DefaultProductParser implements ProductParser {
 
 		String productDetails = parseProductMeta(url,page,document,productDetailsSelector);
 
-		LOG.trace("Full data extraction duration: %sms", System.currentTimeMillis() - now);
+		LOG.trace("Full data extraction duration: {}ms", System.currentTimeMillis() - now);
 
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
 
