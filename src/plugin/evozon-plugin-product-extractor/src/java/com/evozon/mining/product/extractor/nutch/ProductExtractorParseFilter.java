@@ -1,5 +1,6 @@
 package com.evozon.mining.product.extractor.nutch;
 
+import com.evozon.mining.product.parsers.ProductParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.HTMLMetaTags;
@@ -20,7 +21,6 @@ import java.util.*;
  */
 public class ProductExtractorParseFilter implements ParseFilter {
 	private static final Logger LOG = LoggerFactory.getLogger(ProductExtractorParseFilter.class);
-
 
 	static final Map<String, ProductParser> PARSER_MAP = new HashMap<>();
 

@@ -1,6 +1,5 @@
 package com.evozon.mining.product.parsers;
 
-import com.evozon.mining.product.extractor.nutch.ProductParser;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.nutch.storage.WebPage;
@@ -23,8 +22,9 @@ import java.util.Properties;
  * Default {@link ProductParser} implementation
  */
 public class DefaultProductParser implements ProductParser {
-
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultProductParser.class);
+	public static final String PARSERS_CONFIGURATION_FILE = "parser-mappings.properties";
+
 	Map<String, String> selectorMap = new HashMap<>();
 
 	/**
@@ -36,7 +36,7 @@ public class DefaultProductParser implements ProductParser {
 		Properties p = new Properties();
 
 		try {
-			p.load(this.getClass().getResourceAsStream("parser-mappings.properties"));
+			p.load(this.getClass().getResourceAsStream(PARSERS_CONFIGURATION_FILE));
 			Enumeration<?> keys = p.keys();
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();

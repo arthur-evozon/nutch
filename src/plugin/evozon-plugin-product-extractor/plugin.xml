@@ -27,13 +27,15 @@
         </library>
 
         <library name="jsoup-1.8.3.jar"/>
+        <library name="nutch-product-parsers-common-1.0-SNAPSHOT.jar"/>
+        <library name="nutch-product-parsers-1.0-SNAPSHOT.jar"/>
     </runtime>
 
    <requires>
       <import plugin="nutch-extensionpoints"/>
    </requires>
 
-   <extension id="com.evozon.mining.product.extractor.nutch.ProductParser"
+   <extension id="com.evozon.mining.product.parsers.ProductParser"
               name="Nutch product parse"
               point="org.apache.nutch.parse.ParseFilter">
       <implementation id="ProductExtractor" class="com.evozon.mining.product.extractor.nutch.ProductExtractorParseFilter"/>

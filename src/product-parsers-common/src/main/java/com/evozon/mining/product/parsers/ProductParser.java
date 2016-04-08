@@ -1,4 +1,4 @@
-package com.evozon.mining.product.extractor.nutch;
+package com.evozon.mining.product.parsers;
 
 import org.apache.nutch.storage.WebPage;
 
@@ -7,6 +7,7 @@ public interface ProductParser {
 	static final String PRODUCT_PRICE = "product-price";
 	static final String PRODUCT_CURRENCY = "product-currency";
 	static final String PRODUCT_DETAILS = "product-meta";
+
 
 	static final String NAME = "product-name";
 	static final String PRICE_WHOLE = "product-price/whole";

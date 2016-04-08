@@ -1,6 +1,5 @@
 package com.evozon.mining.product.parsers;
 
-import com.evozon.mining.product.extractor.nutch.ProductParser;
 import org.apache.nutch.storage.WebPage;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -25,6 +24,6 @@ public class IntendProductParser extends DefaultProductParser implements Product
 
 	@Override
 	String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return extractText(document, selector, 3).trim();
+		return DefaultProductParser.extractText(document, selector, 3).trim();
 	}
 }
