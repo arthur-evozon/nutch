@@ -6,6 +6,7 @@ build/
 runtime/
 out/
 logs/
+src/**/target/
 *.iml
 .idea/
 
