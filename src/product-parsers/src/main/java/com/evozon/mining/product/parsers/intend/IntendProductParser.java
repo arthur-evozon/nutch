@@ -1,5 +1,7 @@
-package com.evozon.mining.product.parsers;
+package com.evozon.mining.product.parsers.intend;
 
+import com.evozon.mining.product.parsers.DefaultProductParser;
+import com.evozon.mining.product.parsers.ProductParser;
 import org.apache.nutch.storage.WebPage;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -12,7 +14,7 @@ public class IntendProductParser extends DefaultProductParser implements Product
 	private static final String PRODUCT_MARKER = "Prezentare produs:";
 
 	@Override
-	String parseProductName(String url, WebPage page, Document document, String selector) {
+	protected String parseProductName(String url, WebPage page, Document document, String selector) {
 		String productName = super.parseProductName(url, page, document, selector);
 
 		if (!productName.startsWith(PRODUCT_MARKER)) {
@@ -23,7 +25,7 @@ public class IntendProductParser extends DefaultProductParser implements Product
 	}
 
 	@Override
-	String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
+	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
 		return DefaultProductParser.extractText(document, selector, 3).trim();
 	}
 }

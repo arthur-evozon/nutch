@@ -7,6 +7,7 @@ runtime/
 out/
 logs/
 src/**/target/
+**/target/
 src/product-parsers/target/
 src/product-parsers-common/target/
 *.iml

@@ -17,4 +17,11 @@
 -->
 <project name="evozon-plugin-product-extractor" default="jar-core">
   <import file="../build-plugin.xml"/>
+
+  <target name="init-plugin">
+    <echo>Copying language profiles</echo>
+    <copy todir="${build.classes}">
+      <fileset dir="${src.dir}" includes="**/*.properties"/>
+    </copy>
+  </target>
 </project>

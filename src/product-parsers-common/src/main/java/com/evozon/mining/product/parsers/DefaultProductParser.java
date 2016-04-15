@@ -25,6 +25,8 @@ public class DefaultProductParser implements ProductParser {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultProductParser.class);
 	public static final String PARSERS_CONFIGURATION_FILE = "parser-mappings.properties";
 
+	public static final String SELECTOR_SEPARATOR = "|";
+
 	Map<String, String> selectorMap = new HashMap<>();
 
 	/**
@@ -113,48 +115,46 @@ public class DefaultProductParser implements ProductParser {
 		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ]",productName, price, priceCurrency );
 	}
 
-	String parseProductName(String url, WebPage page, Document document, String selector) {
+	protected String parseProductName(String url, WebPage page, Document document, String selector) {
 		return extractText(document, selector);
 	}
 
-	Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
+	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
 		String priceWhole = extractText(document, priceWholeSelector).replaceAll("[^\\d.]", "");
 		String pricePart = extractText(document, pricePartSelector).replaceAll("[^\\d.]", "");
 		if (StringUtils.isBlank(priceWhole)) {
 			return null;
 		}
 
-		Double price = null;
-		try {
-			if (StringUtils.isBlank(pricePart)) {
-				pricePart = "0";
-			}
-
-			price = Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
-		} catch (NumberFormatException e) {
-			LOG.debug("Could not extract price from [{}.{}]", priceWhole, pricePart);
-		}
-
-		return price;
+		return buildPrice(priceWhole, pricePart);
 	}
 
-	String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
+	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
 		return extractText(document, selector);
 	}
 
-	String parseProductMeta(String url, WebPage page, Document document, String selector) {
+	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
 		StringBuilder productDetails = new StringBuilder();
-		Elements productDetailsElement = document.select(selector);
-		if (productDetailsElement != null) {
-			for (Element element : productDetailsElement) {
-				for (Node child : element.childNodes()) {
-					String[] details = child.toString().split(",");
-					for (String detail : details) {
-						if (productDetails.length() > 0) {
-							productDetails.append("\n");
-						}
 
-						productDetails.append(detail.trim());
+		String[] selectors = new String[] { metaSelectors } ;
+
+		if( metaSelectors.contains(SELECTOR_SEPARATOR) ) {
+			selectors = metaSelectors.split(SELECTOR_SEPARATOR);
+		}
+
+		for( String selector : selectors ) {
+			Elements productDetailsElement = document.select(selector.trim());
+			if (productDetailsElement != null) {
+				for (Element element : productDetailsElement) {
+					for (Node child : element.childNodes()) {
+						String[] details = child.toString().split(",");
+						for (String detail : details) {
+							if (productDetails.length() > 0) {
+								productDetails.append("\n");
+							}
+
+							productDetails.append(detail.trim());
+						}
 					}
 				}
 			}
@@ -195,5 +195,20 @@ public class DefaultProductParser implements ProductParser {
 
 	public static double toDouble(byte[] bytes) {
 		return ByteBuffer.wrap(bytes).getDouble();
+	}
+
+	public static Double buildPrice(String priceWhole, String pricePart ) {
+		Double price = null;
+		try {
+			if (StringUtils.isBlank(pricePart)) {
+				pricePart = "0";
+			}
+
+			price = Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
+		} catch (NumberFormatException e) {
+			LOG.debug("Could not extract price from [{}.{}]", priceWhole, pricePart);
+		}
+
+		return price;
 	}
 }
