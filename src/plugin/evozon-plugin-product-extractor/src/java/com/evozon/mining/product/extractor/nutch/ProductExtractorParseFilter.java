@@ -66,20 +66,6 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 	private Configuration conf;
 
-	/**
-	 * We use regular expressions to parse out the Labels section from
-	 * the section snippet shown below:
-	 * <pre>
-	 * Labels:
-	 * <a href='http://sujitpal.blogspot.com/search/label/ror' rel='tag'>ror</a>,
-	 * ...
-	 * </span>
-	 * </pre>
-	 * Accumulate the tag values into a List, then stuff the list into the
-	 * parseResult with a well-known key (exposed as a public static variable
-	 * here, so the indexing filter can pick it up from here).
-	 */
-
 	@Override
 	public Parse filter(String url, WebPage page, Parse parse, HTMLMetaTags metaTags, DocumentFragment doc) {
 		String host = null;
@@ -92,9 +78,9 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 		LOG.trace("Loading parsers for {}", host);
 
-		ProductParser productParser = PARSER_MAP.get( host.trim().toLowerCase() );
-		if( productParser != null ) {
-			LOG.trace("Found parsers for {}: {}", host, productParser);
+		ProductParser productParser = PARSER_MAP.get(host.trim().toLowerCase());
+		if (productParser != null) {
+			LOG.trace("Found parsers for {}: '{}'", host, productParser.getClass().getName());
 			productParser.parse(url, page);
 		}
 

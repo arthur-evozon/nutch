@@ -75,7 +75,7 @@ public class DefaultProductParser implements ProductParser {
 			return;
 		}
 
-		LOG.trace("Extracting product from URL '{}'",url);
+		LOG.trace("Extracting product from URL '{}'", url);
 
 		long now = System.currentTimeMillis();
 		Document document = Jsoup.parse(new String(page.getContent().array()));
@@ -89,17 +89,17 @@ public class DefaultProductParser implements ProductParser {
 			return;
 		}
 
-		Double price = parseProductPrice(url,page,document, priceWholeSelector, pricePartSelector);
+		Double price = parseProductPrice(url, page, document, priceWholeSelector, pricePartSelector);
 		if (price == null) {
 			return;
 		}
 
-		String priceCurrency = parseProductPriceCurrency(url,page,document,priceCurrencySelector);
-		if( StringUtils.isBlank(priceCurrency)) {
+		String priceCurrency = parseProductPriceCurrency(url, page, document, priceCurrencySelector);
+		if (StringUtils.isBlank(priceCurrency)) {
 			return;
 		}
 
-		String productDetails = parseProductMeta(url,page,document,productDetailsSelector);
+		String productDetails = parseProductMeta(url, page, document, productDetailsSelector);
 
 		LOG.trace("Full data extraction duration: {}ms", System.currentTimeMillis() - now);
 
@@ -112,7 +112,7 @@ public class DefaultProductParser implements ProductParser {
 			metadata.put(new Utf8(PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
 		}
 
-		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ]",productName, price, priceCurrency );
+		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ] \n\t{}", productName, price, priceCurrency, productDetails);
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
@@ -136,13 +136,13 @@ public class DefaultProductParser implements ProductParser {
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
 		StringBuilder productDetails = new StringBuilder();
 
-		String[] selectors = new String[] { metaSelectors } ;
+		String[] selectors = new String[]{metaSelectors};
 
-		if( metaSelectors.contains(SELECTOR_SEPARATOR) ) {
+		if (metaSelectors.contains(SELECTOR_SEPARATOR)) {
 			selectors = metaSelectors.split(SELECTOR_SEPARATOR);
 		}
 
-		for( String selector : selectors ) {
+		for (String selector : selectors) {
 			Elements productDetailsElement = document.select(selector.trim());
 			if (productDetailsElement != null) {
 				for (Element element : productDetailsElement) {
@@ -168,9 +168,17 @@ public class DefaultProductParser implements ProductParser {
 	}
 
 	public static String extractText(Document document, String selector, int nth) {
+		return extractText(document.select(selector), nth);
+	}
+
+	public static String extractText(Elements elements) {
+		return extractText(elements, 1);
+	}
+
+	public static String extractText(Elements elements, int nth) {
 		String ret = "";
-		Elements elements = document.select(selector);
-		if (elements != null && elements.size() > 0 ) {
+
+		if (elements != null && elements.size() > 0) {
 			Element element = elements.get(0);
 			for (Node child : element.childNodes()) {
 				ret = child.toString();
@@ -178,7 +186,7 @@ public class DefaultProductParser implements ProductParser {
 					ret = ((TextNode) child).text();
 				}
 
-				if( --nth <= 0 ) {
+				if (--nth <= 0) {
 					break;
 				}
 			}
@@ -197,7 +205,7 @@ public class DefaultProductParser implements ProductParser {
 		return ByteBuffer.wrap(bytes).getDouble();
 	}
 
-	public static Double buildPrice(String priceWhole, String pricePart ) {
+	public static Double buildPrice(String priceWhole, String pricePart) {
 		Double price = null;
 		try {
 			if (StringUtils.isBlank(pricePart)) {

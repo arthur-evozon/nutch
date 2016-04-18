@@ -75,6 +75,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 
 		String[] productDetails = Bytes.toString(productDetailsBuffer).split("\n");
 		for (String productDetail : productDetails) {
+			productDetail.replaceAll("&gt;", "" );
 			LOG.trace("Adding productDetail: [" + productDetail + "] for URL: " + url.toString());
 			doc.add(ProductParser.PRODUCT_DETAILS, productDetail);
 		}
