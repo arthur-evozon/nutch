@@ -50,7 +50,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		}
 
 		double productPrice = DefaultProductParser.toDouble(productPriceBytes.array());
-		String priceStr = String.format( "%.2f", productPrice);
+		String priceStr = String.format("%.2f", productPrice);
 
 		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_CURRENCY));
 		if (productCurrencyBytes == null || productCurrencyBytes.remaining() == 0) {
@@ -63,7 +63,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		doc.add(ProductParser.PRODUCT_PRICE, priceStr);
 		doc.add(ProductParser.PRODUCT_CURRENCY, productCurrency);
 
-		LOG.info("\n\t>>>> Adding product: [ {} : {} ] for URL: {}", productName,priceStr, url.toString());
+		LOG.info("\n\t>>>> Adding product: [ {} : {} ] for URL: {}", productName, priceStr, url.toString());
 
 		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_DETAILS));
 		if (productDetailsBuffer == null || productDetailsBuffer.remaining() == 0) {
@@ -75,7 +75,8 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 
 		String[] productDetails = Bytes.toString(productDetailsBuffer).split("\n");
 		for (String productDetail : productDetails) {
-			LOG.trace("Adding productDetail: [" + productDetail + "] for URL: " + url.toString());
+			productDetail = productDetail.replaceAll("&gt;", "").trim();
+			LOG.trace("+ [ {} ]", productDetail);
 			doc.add(ProductParser.PRODUCT_DETAILS, productDetail);
 		}
 

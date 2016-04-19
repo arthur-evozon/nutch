@@ -12,4 +12,6 @@ src/product-parsers/target/
 src/product-parsers-common/target/
 *.iml
 .idea/
-
+src/**/target
+src/**/target/
+src/**/target/*
