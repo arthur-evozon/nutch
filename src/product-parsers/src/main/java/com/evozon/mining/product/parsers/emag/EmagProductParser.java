@@ -1,0 +1,57 @@
+package com.evozon.mining.product.parsers.emag;
+
+import com.evozon.mining.product.parsers.DefaultProductParser;
+import com.evozon.mining.product.parsers.ProductParser;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.nutch.storage.WebPage;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+public class EmagProductParser extends DefaultProductParser implements ProductParser {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EmagProductParser.class);
+
+	@Override
+	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
+
+		StringBuilder metaLines = new StringBuilder();
+
+		Elements valueElements = document.select(metaSelectors);
+
+		if (valueElements != null) {
+			for (Element valueElement : valueElements) {
+				Element keyElement = valueElement.previousElementSibling();
+				List<Node> keyElementText = keyElement.childNodes();
+
+				if (keyElementText == null || keyElementText.size() != 1) {
+					continue;
+				}
+
+				String key = keyElementText.get(0).toString();
+				do {
+					key = StringUtils.reverse(StringUtils.reverse(key).replaceFirst(":", ""));
+				} while (key.endsWith(":"));
+
+				List<Node> valuelementText = valueElement.childNodes();
+
+				if (valuelementText == null || valuelementText.size() != 1) {
+					continue;
+				}
+				String value = valuelementText.get(0).toString();
+
+				if( metaLines.length() > 0 ) {
+					metaLines.append("\n");
+				}
+				metaLines.append(key+":"+value);
+			}
+		}
+
+		return metaLines.toString();
+	}
+}
