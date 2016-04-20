@@ -33,22 +33,22 @@ public class EmagProductParser extends DefaultProductParser implements ProductPa
 					continue;
 				}
 
-				String key = keyElementText.get(0).toString();
+				String key = keyElementText.get(0).toString().trim();
 				do {
-					key = StringUtils.reverse(StringUtils.reverse(key).replaceFirst(":", ""));
+					key = StringUtils.reverse(StringUtils.reverse(key).replaceFirst(":", "")).trim();
 				} while (key.endsWith(":"));
 
-				List<Node> valuelementText = valueElement.childNodes();
+				List<Node> valueElementText = valueElement.childNodes();
 
-				if (valuelementText == null || valuelementText.size() != 1) {
+				if (valueElementText == null || valueElementText.size() != 1) {
 					continue;
 				}
-				String value = valuelementText.get(0).toString();
+				String value = valueElementText.get(0).toString().trim();
 
-				if( metaLines.length() > 0 ) {
+				if (metaLines.length() > 0) {
 					metaLines.append("\n");
 				}
-				metaLines.append(key+":"+value);
+				metaLines.append(key + ":" + value);
 			}
 		}
 
