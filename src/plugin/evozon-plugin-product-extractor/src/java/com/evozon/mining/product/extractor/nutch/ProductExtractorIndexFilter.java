@@ -40,7 +40,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 			return doc;
 		}
 
-		// add to the nutch document, the properties of the field are set in
+		// add to the nutch doc, the properties of the field are set in
 		// the addIndexBackendOptions method.
 		String productName = new String(productDefinition.array());
 
@@ -63,20 +63,17 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		doc.add(ProductParser.PRODUCT_PRICE, priceStr);
 		doc.add(ProductParser.PRODUCT_CURRENCY, productCurrency);
 
-		LOG.info("\n\t>>>> Adding product: [ {} : {} ] for URL: {}", productName, priceStr, url.toString());
+		LOG.info("\n\t>>>> Adding product: [ {} : {} {} ] for URL: {}", productName, priceStr, productCurrency, url.toString());
 
 		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_DETAILS));
 		if (productDetailsBuffer == null || productDetailsBuffer.remaining() == 0) {
 			return doc;
 		}
 
-		// add to the nutch document, the properties of the field are set in
-		// the addIndexBackendOptions method.
-
 		String[] productDetails = Bytes.toString(productDetailsBuffer).split("\n");
 		for (String productDetail : productDetails) {
 			productDetail = productDetail.replaceAll("&gt;", "").trim();
-			LOG.trace("+ [ {} ]", productDetail);
+			LOG.debug("+ [ {} ]", productDetail);
 			doc.add(ProductParser.PRODUCT_DETAILS, productDetail);
 		}
 
