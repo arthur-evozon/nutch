@@ -70,9 +70,9 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 			return doc;
 		}
 
-		String[] productDetails = Bytes.toString(productDetailsBuffer).split("\n");
+		String[] productDetails = Bytes.toString(productDetailsBuffer).replaceAll("&gt;", "").split("\n");
 		for (String productDetail : productDetails) {
-			productDetail = productDetail.replaceAll("&gt;", "").trim();
+			productDetail = productDetail.trim();
 			LOG.debug("+ [ {} ]", productDetail);
 			doc.add(ProductParser.PRODUCT_DETAILS, productDetail);
 		}
