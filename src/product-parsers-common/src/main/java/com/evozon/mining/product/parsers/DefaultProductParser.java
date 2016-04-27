@@ -40,9 +40,7 @@ public class DefaultProductParser implements ProductParser {
 	 */
 	@Override
 	public void initializeParser() {
-
 		Properties p = new Properties();
-
 		try {
 			p.load(this.getClass().getResourceAsStream(PARSERS_CONFIGURATION_FILE));
 			Enumeration<?> keys = p.keys();
