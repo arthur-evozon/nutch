@@ -1,7 +1,7 @@
 package com.evozon.mining.product.extractor.nutch;
 
 import com.evozon.mining.product.parsers.DefaultProductParser;
-import com.evozon.mining.product.parsers.ProductParser;
+import com.evozon.mining.product.parsers.ProductParserConstants;
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
@@ -35,7 +35,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 
 
 	public NutchDocument filter(NutchDocument doc, String url, WebPage page) throws IndexingException {
-		ByteBuffer productDefinition = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_KEY));
+		ByteBuffer productDefinition = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_KEY));
 		if (productDefinition == null || productDefinition.remaining() == 0) {
 			return doc;
 		}
@@ -44,7 +44,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		// the addIndexBackendOptions method.
 		String productName = new String(productDefinition.array());
 
-		ByteBuffer productPriceBytes = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_PRICE));
+		ByteBuffer productPriceBytes = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_PRICE));
 		if (productPriceBytes == null || productPriceBytes.remaining() == 0) {
 			return doc;
 		}
@@ -52,20 +52,20 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		double productPrice = DefaultProductParser.toDouble(productPriceBytes.array());
 		String priceStr = String.format("%.2f", productPrice);
 
-		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_CURRENCY));
+		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_CURRENCY));
 		if (productCurrencyBytes == null || productCurrencyBytes.remaining() == 0) {
 			return doc;
 		}
 
 		String productCurrency = new String(productCurrencyBytes.array());
 
-		doc.add(ProductParser.PRODUCT_KEY, productName);
-		doc.add(ProductParser.PRODUCT_PRICE, priceStr);
-		doc.add(ProductParser.PRODUCT_CURRENCY, productCurrency);
+		doc.add(ProductParserConstants.PRODUCT_KEY, productName);
+		doc.add(ProductParserConstants.PRODUCT_PRICE, priceStr);
+		doc.add(ProductParserConstants.PRODUCT_CURRENCY, productCurrency);
 
 		LOG.info("\n\t>>>> Adding product: [ {} : {} {} ] for URL: {}", productName, priceStr, productCurrency, url.toString());
 
-		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParser.PRODUCT_DETAILS));
+		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_DETAILS));
 		if (productDetailsBuffer == null || productDetailsBuffer.remaining() == 0) {
 			return doc;
 		}
@@ -74,7 +74,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		for (String productDetail : productDetails) {
 			productDetail = productDetail.trim();
 			LOG.debug("+ [ {} ]", productDetail);
-			doc.add(ProductParser.PRODUCT_DETAILS, productDetail);
+			doc.add(ProductParserConstants.PRODUCT_DETAILS, productDetail);
 		}
 
 		return doc;

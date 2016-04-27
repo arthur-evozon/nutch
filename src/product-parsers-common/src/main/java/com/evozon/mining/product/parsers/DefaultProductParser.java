@@ -25,6 +25,12 @@ public class DefaultProductParser implements ProductParser {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultProductParser.class);
 	public static final String PARSERS_CONFIGURATION_FILE = "parser-mappings.properties";
 
+	public static final String NAME = "product-name";
+	public static final String PRICE_WHOLE = "product-price/whole";
+	public static final String PRICE_PART = "product-price/part";
+	public static final String PRICE_CURRENCY = "product-price/currency";
+	public static final String META = "product-meta";
+
 	public static final String SELECTOR_SEPARATOR = "|";
 
 	Map<String, String> selectorMap = new HashMap<>();
@@ -105,11 +111,11 @@ public class DefaultProductParser implements ProductParser {
 
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
 
-		metadata.put(new Utf8(PRODUCT_KEY), ByteBuffer.wrap(productName.getBytes()));
-		metadata.put(new Utf8(PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
-		metadata.put(new Utf8(PRODUCT_CURRENCY), ByteBuffer.wrap(priceCurrency.getBytes()));
+		metadata.put(new Utf8(ProductParserConstants.PRODUCT_KEY), ByteBuffer.wrap(productName.getBytes()));
+		metadata.put(new Utf8(ProductParserConstants.PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
+		metadata.put(new Utf8(ProductParserConstants.PRODUCT_CURRENCY), ByteBuffer.wrap(priceCurrency.getBytes()));
 		if (productDetails.length() > 0) {
-			metadata.put(new Utf8(PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
+			metadata.put(new Utf8(ProductParserConstants.PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
 		}
 
 		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ] \n\t{}", productName, price, priceCurrency, productDetails);

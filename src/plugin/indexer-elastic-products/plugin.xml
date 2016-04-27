@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="indexer-elastic-products" name="ElasticIndexWriter" version="1.0.0"
+  provider-name="evozon.com">
+
+<runtime>
+    <library name="indexer-elastic-products.jar">
+      <export name="*" />
+    </library>
+    
+    <library name="elasticsearch-1.4.1.jar"/>
+    <library name="lucene-analyzers-common-4.10.2.jar"/>
+    <library name="lucene-codecs-4.10.2.jar"/>
+    <library name="lucene-core-4.10.2.jar"/>
+    <library name="lucene-grouping-4.10.2.jar"/>
+    <library name="lucene-highlighter-4.10.2.jar"/>
+    <library name="lucene-join-4.10.2.jar"/>
+    <library name="lucene-memory-4.10.2.jar"/>
+    <library name="lucene-misc-4.10.2.jar"/>
+    <library name="lucene-queries-4.10.2.jar"/>
+    <library name="lucene-queryparser-4.10.2.jar"/>
+    <library name="lucene-sandbox-4.10.2.jar"/>
+    <library name="lucene-spatial-4.10.2.jar"/>
+    <library name="lucene-suggest-4.10.2.jar"/>
+    <library name="spatial4j-0.4.1.jar"/>
+    <library name="antlr-runtime-3.5.jar"/>
+    <library name="asm-4.1"/>
+    <library name="asm-commons-4.1.jar"/>
+    <library name="nutch-product-parsers-common-1.0-SNAPSHOT.jar"/>
+  </runtime>
+
+  <requires>
+    <import plugin="nutch-extensionpoints" />
+  </requires>
+
+  <extension id="com.evozon.mining.product.indexer.elastic"
+    name="Elasticsearch Index Writer"
+    point="org.apache.nutch.indexer.IndexWriter">
+    <implementation id="ProductsElasticIndexWriter" class="com.evozon.mining.product.indexwriter.elastic.ProductsMetaElasticIndexWriter" />
+  </extension>
+
+</plugin>

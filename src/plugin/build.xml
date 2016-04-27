@@ -65,6 +65,7 @@
         <ant dir="urlnormalizer-regex" target="deploy"/>
 
         <ant dir="evozon-plugin-product-extractor" target="deploy"/>
+        <ant dir="indexer-elastic-products" target="deploy"/>
 
         <!--
         <ant dir="feed" target="deploy"/>
@@ -159,6 +160,7 @@
         <ant dir="urlnormalizer-regex" target="clean"/>
 
         <ant dir="evozon-plugin-product-extractor" target="clean"/>
+        <ant dir="indexer-elastic-products" target="clean"/>
 
     </target>
 </project>
