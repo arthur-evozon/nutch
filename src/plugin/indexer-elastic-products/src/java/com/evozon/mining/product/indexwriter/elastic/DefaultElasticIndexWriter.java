@@ -105,19 +105,18 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 
 	@Override
 	public void write(NutchDocument doc) throws IOException {
-		String id = (String) doc.getFieldValue("id");
+		String id = doc.getFieldValue("id");
 		String type = doc.getDocumentMeta().get("type");
 		if (type == null) {
 			type = "doc";
 		}
 
 		IndexRequestBuilder request = client.prepareIndex(defaultIndex, type, id);
-
 		Map<String, Object> source = new HashMap<String, Object>();
 
 		// Loop through all fields of this doc
 		for (String fieldName : doc.getFieldNames()) {
-			processField(doc, source, fieldName);
+			processIndexedField(doc, source, fieldName);
 		}
 
 		request.setSource(source);
@@ -127,9 +126,7 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 		indexedDocs++;
 		bulkDocs++;
 
-		if (bulkDocs >= maxBulkDocs || bulkLength >= maxBulkLength)
-
-		{
+		if (bulkDocs >= maxBulkDocs || bulkLength >= maxBulkLength) {
 			LOG.info("Processing bulk request [docs = " + bulkDocs + ", length = "
 					+ bulkLength + ", total docs = " + indexedDocs
 					+ ", last doc in bulk = '" + id + "']");
@@ -140,7 +137,7 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 
 	}
 
-	Map<String, Object> processField(NutchDocument doc, Map<String, Object> source, String fieldName) {
+	Map<String, Object> processIndexedField(NutchDocument doc, Map<String, Object> source, String fieldName) {
 		if (doc.getFieldValues(fieldName).size() > 1) {
 			source.put(fieldName, doc.getFieldValue(fieldName));
 			// Loop through the values to keep track of the size of this document

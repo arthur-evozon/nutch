@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class ProductsMetaElasticIndexWriter extends DefaultElasticIndexWriter {
 	@Override
-	Map<String, Object> processField(NutchDocument doc, Map<String, Object> source, String fieldName) {
+	Map<String, Object> processIndexedField(NutchDocument doc, Map<String, Object> source, String fieldName) {
 		if (doc.getFieldValues(fieldName).size() < 1 || !ProductParserConstants.PRODUCT_DETAILS.equals(fieldName)) {
-			return super.processField(doc, source, fieldName);
+			return super.processIndexedField(doc, source, fieldName);
 		}
 
 		// add it as an array: meta data will be a collection of text
