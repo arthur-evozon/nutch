@@ -73,7 +73,12 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 						productDetails.append("\n");
 					}
 
-					productDetails.append(details.replaceAll("&gt;","").trim());
+					// cleanup the string
+					details = removeTrailing("\\.",details);
+					details = details.replaceAll("&gt;", "").trim();
+					details = details.replaceAll("^[^a-zA-Z0-9\\s]+|[^a-zA-Z0-9\\s]+$", "").trim();
+
+					productDetails.append(details);
 				}
 			}
 		}

@@ -223,4 +223,13 @@ public class DefaultProductParser implements ProductParser {
 
 		return price;
 	}
+
+	public static String removeTrailing(String suffix, String text) {
+		String result = text;
+		while (result.endsWith(suffix)) {
+			result = StringUtils.reverse(StringUtils.reverse(result).replaceFirst(suffix, "")).trim();
+		}
+
+		return result;
+	}
 }

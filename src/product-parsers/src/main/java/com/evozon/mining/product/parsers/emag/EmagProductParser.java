@@ -2,7 +2,6 @@ package com.evozon.mining.product.parsers.emag;
 
 import com.evozon.mining.product.parsers.DefaultProductParser;
 import com.evozon.mining.product.parsers.ProductParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.nutch.storage.WebPage;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,9 +33,7 @@ public class EmagProductParser extends DefaultProductParser implements ProductPa
 				}
 
 				String key = keyElementText.get(0).toString().trim();
-				do {
-					key = StringUtils.reverse(StringUtils.reverse(key).replaceFirst(":", "")).trim();
-				} while (key.endsWith(":"));
+				key = removeTrailing(":", key);
 
 				List<Node> valueElementText = valueElement.childNodes();
 
