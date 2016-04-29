@@ -15,3 +15,4 @@ src/product-parsers-common/target/
 src/**/target
 src/**/target/
 src/**/target/*
+urls
