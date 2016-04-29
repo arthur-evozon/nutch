@@ -32,7 +32,6 @@ public class SolrUtils {
 
 			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 			credentialsProvider.setCredentials(scope, new UsernamePasswordCredentials(username, job.get(SolrConstants.PASSWORD)));
-
 			RequestConfig requestConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
 
 			httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig);
