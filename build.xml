@@ -1031,6 +1031,11 @@
         <source path="${basedir}/src/plugin/urlnormalizer-regex/src/java/" />
         <source path="${basedir}/src/plugin/urlnormalizer-regex/src/test/" />
 
+        <source path="${basedir}/src/plugin/evozon-plugin-product-extractor/src/java/" />
+        <source path="${basedir}/src/plugin/indexer-elastic-products/src/java/" />
+        <source path="${basedir}/src/product-parsers-common/src/main/java/" />
+        <source path="${basedir}/src/product-parsers/src/main/java/" />
+        
         <output path="${basedir}/build/classes" />
       </classpath>
     </eclipse>
