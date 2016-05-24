@@ -1,6 +1,7 @@
 package com.evozon.mining.product.parsers.vitacom;
 
 import com.evozon.mining.product.parsers.DefaultProductParser;
+import com.evozon.mining.product.parsers.ProductParserUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.nutch.storage.WebPage;
 import org.jsoup.nodes.Document;
@@ -16,7 +17,7 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String extractedPriceData = extractText(document.getElementsByClass(priceWholeSelector));
+		String extractedPriceData = ProductParserUtils.extractText(document.getElementsByClass(priceWholeSelector));
 		if (StringUtils.isBlank(extractedPriceData)) {
 			return null;
 		}
@@ -38,12 +39,12 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 			return null;
 		}
 
-		return buildPrice(priceWhole, pricePart);
+		return ProductParserUtils.buildPrice(priceWhole, pricePart);
 	}
 
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		String extractedPriceData = extractText(document.getElementsByClass(selector));
+		String extractedPriceData = ProductParserUtils.extractText(document.getElementsByClass(selector));
 		if (StringUtils.isBlank(extractedPriceData)) {
 			return null;
 		}
@@ -74,7 +75,7 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 					}
 
 					// cleanup the string
-					details = removeTrailing("\\.",details);
+					details = ProductParserUtils.removeTrailing("\\.",details);
 					details = details.replaceAll("&gt;", "").trim();
 					details = details.replaceAll("^[^a-zA-Z0-9\\s]+|[^a-zA-Z0-9\\s]+$", "").trim();
 

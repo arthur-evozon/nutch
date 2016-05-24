@@ -1,7 +1,7 @@
 package com.evozon.mining.product.extractor.nutch;
 
-import com.evozon.mining.product.parsers.DefaultProductParser;
 import com.evozon.mining.product.parsers.ProductParserConstants;
+import com.evozon.mining.product.parsers.ProductParserUtils;
 import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
@@ -49,7 +49,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 			return doc;
 		}
 
-		double productPrice = DefaultProductParser.toDouble(productPriceBytes.array());
+		double productPrice = ProductParserUtils.toDouble(productPriceBytes.array());
 		String priceStr = String.format("%.2f", productPrice);
 
 		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_CURRENCY));

@@ -7,7 +7,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +109,7 @@ public class DefaultProductParser implements ProductParser {
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
 
 		metadata.put(new Utf8(ProductParserConstants.PRODUCT_KEY), ByteBuffer.wrap(productName.getBytes()));
-		metadata.put(new Utf8(ProductParserConstants.PRODUCT_PRICE), ByteBuffer.wrap(toByteArray(price)));
+		metadata.put(new Utf8(ProductParserConstants.PRODUCT_PRICE), ByteBuffer.wrap(ProductParserUtils.toByteArray(price)));
 		metadata.put(new Utf8(ProductParserConstants.PRODUCT_CURRENCY), ByteBuffer.wrap(priceCurrency.getBytes()));
 		if (productDetails.length() > 0) {
 			metadata.put(new Utf8(ProductParserConstants.PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
@@ -120,21 +119,21 @@ public class DefaultProductParser implements ProductParser {
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
-		return extractText(document, selector);
+		return ProductParserUtils.extractText(document, selector);
 	}
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String priceWhole = extractText(document, priceWholeSelector).replaceAll("[^\\d]", "");
-		String pricePart = extractText(document, pricePartSelector).replaceAll("[^\\d.]", "");
+		String priceWhole = ProductParserUtils.extractText(document, priceWholeSelector).replaceAll("[^\\d]", "");
+		String pricePart = ProductParserUtils.extractText(document, pricePartSelector).replaceAll("[^\\d.]", "");
 		if (StringUtils.isBlank(priceWhole)) {
 			return null;
 		}
 
-		return buildPrice(priceWhole, pricePart);
+		return ProductParserUtils.buildPrice(priceWhole, pricePart);
 	}
 
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return extractText(document, selector);
+		return ProductParserUtils.extractText(document, selector);
 	}
 
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
@@ -165,71 +164,5 @@ public class DefaultProductParser implements ProductParser {
 		}
 
 		return productDetails.toString();
-	}
-
-	public static String extractText(Document document, String selector) {
-		return extractText(document, selector, 1);
-	}
-
-	public static String extractText(Document document, String selector, int nth) {
-		return extractText(document.select(selector), nth);
-	}
-
-	public static String extractText(Elements elements) {
-		return extractText(elements, 1);
-	}
-
-	public static String extractText(Elements elements, int nth) {
-		String ret = "";
-
-		if (elements != null && elements.size() > 0) {
-			Element element = elements.get(0);
-			for (Node child : element.childNodes()) {
-				ret = child.toString();
-				if (child instanceof TextNode) {
-					ret = ((TextNode) child).text();
-				}
-
-				if (--nth <= 0) {
-					break;
-				}
-			}
-		}
-
-		return ret;
-	}
-
-	public static byte[] toByteArray(double value) {
-		byte[] bytes = new byte[8];
-		ByteBuffer.wrap(bytes).putDouble(value);
-		return bytes;
-	}
-
-	public static double toDouble(byte[] bytes) {
-		return ByteBuffer.wrap(bytes).getDouble();
-	}
-
-	public static Double buildPrice(String priceWhole, String pricePart) {
-		Double price = null;
-		try {
-			if (StringUtils.isBlank(pricePart)) {
-				pricePart = "0";
-			}
-
-			price = Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
-		} catch (NumberFormatException e) {
-			LOG.debug("Could not extract price from [{}.{}]", priceWhole, pricePart);
-		}
-
-		return price;
-	}
-
-	public static String removeTrailing(String suffix, String text) {
-		String result = text;
-		while (result.endsWith(suffix)) {
-			result = StringUtils.reverse(StringUtils.reverse(result).replaceFirst(suffix, "")).trim();
-		}
-
-		return result;
 	}
 }
