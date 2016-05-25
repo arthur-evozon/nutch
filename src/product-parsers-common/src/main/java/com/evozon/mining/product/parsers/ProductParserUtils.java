@@ -93,6 +93,10 @@ public class ProductParserUtils {
 		if (valueElements != null) {
 			for (Element valueElement : valueElements) {
 				Element keyElement = valueElement.previousElementSibling();
+				if( keyElement == null ) {
+					continue;
+				}
+
 				List<Node> keyElementText = keyElement.childNodes();
 
 				if (keyElementText == null || keyElementText.size() != 1) {

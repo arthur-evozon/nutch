@@ -124,7 +124,7 @@ public class DefaultProductParser implements ProductParser {
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
 		String priceWhole = ProductParserUtils.extractText(document, priceWholeSelector).replaceAll("[^\\d]", "");
-		String pricePart = ProductParserUtils.extractText(document, pricePartSelector).replaceAll("[^\\d.]", "");
+		String pricePart = ProductParserUtils.extractText(document, pricePartSelector).replaceAll("[^\\d]", "");
 		if (StringUtils.isBlank(priceWhole)) {
 			return null;
 		}
