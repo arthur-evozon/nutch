@@ -16,19 +16,19 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ProductParserUtils {
 	private static final Logger LOG = getLogger(ProductParserUtils.class);
 
-	public static String extractText(Document document, String selector) {
-		return extractText(document, selector, 1);
+	public static String extractFirstChildText(Document document, String selector) {
+		return extractNthChildText(document, selector, 1);
 	}
 
-	public static String extractText(Document document, String selector, int nth) {
-		return extractText(document.select(selector), nth);
+	public static String extractNthChildText(Document document, String selector, int nth) {
+		return extractNthChildText(document.select(selector), nth);
 	}
 
-	public static String extractText(Elements elements) {
-		return extractText(elements, 1);
+	public static String extractFirstChildText(Elements elements) {
+		return extractNthChildText(elements, 1);
 	}
 
-	public static String extractText(Elements elements, int nth) {
+	public static String extractNthChildText(Elements elements, int nth) {
 		String ret = "";
 
 		if (elements != null && elements.size() > 0) {
@@ -41,6 +41,35 @@ public class ProductParserUtils {
 
 				if (--nth <= 0) {
 					break;
+				}
+			}
+		}
+
+		return ret.trim();
+	}
+
+	public static String extractFirstAttrText(Document document, String attr, String selector) {
+		return extractFirstAttrText(document.select(selector), attr);
+	}
+
+	public static String extractNthAttrText(Document document, String attr, String selector, int nth) {
+		return extractNthAttrText(document.select(selector), attr, nth);
+	}
+
+
+	public static String extractFirstAttrText(Elements elements, String attr) {
+		return extractNthAttrText(elements, attr, 1);
+	}
+
+	public static String extractNthAttrText(Elements elements, String attr, int nth) {
+		String ret = "";
+
+		if (elements != null && elements.size() > 0) {
+			for (int i = 0; i < Math.min(elements.size(), nth + 1); i++) {
+				Element element = elements.get(i);
+				if (element != null && element.hasAttr(attr)) {
+					ret = element.attr(attr);
+					nth--;
 				}
 			}
 		}
@@ -93,7 +122,7 @@ public class ProductParserUtils {
 		if (valueElements != null) {
 			for (Element valueElement : valueElements) {
 				Element keyElement = valueElement.previousElementSibling();
-				if( keyElement == null ) {
+				if (keyElement == null) {
 					continue;
 				}
 
@@ -126,6 +155,73 @@ public class ProductParserUtils {
 			}
 		}
 
+		return nameValues;
+	}
+
+	public static Map<String, Set<String>> getAllNameValuesWithSelectorPattern(Document document, String metaSelector, String...
+			nestedSelectors) {
+		Elements valueElements = document.select(metaSelector);
+		Deque<String> selectorQueue = new LinkedList<>();
+
+		for (String selector : nestedSelectors) {
+			selectorQueue.add(selector);
+		}
+		Map<String, Set<String>> nameValues = new HashMap<>();
+		for (Element el : valueElements) {
+			nameValues.putAll(buildNestedNameValues(el, selectorQueue));
+		}
+
+		return nameValues;
+	}
+
+	public static Map<String, Set<String>> buildNestedNameValues(Element root, Deque<String> selectors) {
+		if (selectors.size() <= 0) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, Set<String>> nameValues = new HashMap<>();
+		String currentSelector = selectors.removeFirst();
+
+		for (Element currentElement : root.select(currentSelector)) {
+			if (selectors.size() > 0) {
+				nameValues.putAll(buildNestedNameValues(currentElement, selectors));
+			} else {
+				Elements leaf = root.select(currentSelector);
+				if (leaf.size() >= 2) {
+					Element valueElement = leaf.last();
+					Element keyElement = valueElement.previousElementSibling();
+
+					List<Node> keyElementText = keyElement.childNodes();
+					if (keyElementText == null || keyElementText.size() != 1) {
+						return nameValues;
+					}
+
+					String key = keyElementText.get(0).toString().trim();
+					if (StringUtils.isBlank(key)) {
+						return nameValues;
+					}
+
+					List<Node> valueElementText = valueElement.childNodes();
+					if (valueElementText == null || valueElementText.size() != 1) {
+						return nameValues;
+					}
+
+					String value = valueElementText.get(0).toString().trim();
+
+					if (!nameValues.containsKey(key)) {
+						nameValues.put(key, new HashSet<String>());
+					}
+
+					Set<String> values = nameValues.get(key);
+					values.add(value);
+
+					selectors.addFirst(currentSelector);
+					return nameValues;
+				}
+			}
+		}
+
+		selectors.addFirst(currentSelector);
 		return nameValues;
 	}
 

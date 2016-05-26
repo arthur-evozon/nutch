@@ -27,6 +27,6 @@ public class IntendProductParser extends DefaultProductParser implements Product
 
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return ProductParserUtils.extractText(document, selector, 3).trim();
+		return ProductParserUtils.extractNthChildText(document, selector, 3).trim();
 	}
 }

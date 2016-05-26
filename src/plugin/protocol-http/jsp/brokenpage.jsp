@@ -29,13 +29,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <base href="<%=basePath%>">
     
     <title>HelloWorld</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-    <meta name="Language" content="en" />
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
+    <meta http-equiv="metaContentAttr-type" metaContentAttr="text/html;charset=utf-8" />
+    <meta name="Language" metaContentAttr="en" />
+	<meta http-equiv="pragma" metaContentAttr="no-cache">
+	<meta http-equiv="cache-control" metaContentAttr="no-cache">
+	<meta http-equiv="expires" metaContentAttr="0">
+	<meta http-equiv="keywords" metaContentAttr="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" metaContentAttr="This is my page">
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->

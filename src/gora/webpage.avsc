@@ -68,7 +68,7 @@
             {
               "name": "code",
               "type": "int",
-              "doc": "A protocol response code which can be one of SUCCESS - content was retrieved without errors, FAILED - Content was not retrieved. Any further errors may be indicated in args, PROTO_NOT_FOUND - This protocol was not found. Application may attempt to retry later, GONE - Resource is gone, MOVED - Resource has moved permanently. New url should be found in args, TEMP_MOVED - Resource has moved temporarily. New url should be found in args., NOTFOUND - Resource was not found, RETRY - Temporary failure. Application may retry immediately., EXCEPTION - Unspecified exception occured. Further information may be provided in args., ACCESS_DENIED - Access denied - authorization required, but missing\/incorrect., ROBOTS_DENIED - Access denied by robots.txt rules., REDIR_EXCEEDED - Too many redirects., NOTFETCHING - Not fetching., NOTMODIFIED - Unchanged since the last fetch., WOULDBLOCK - Request was refused by protocol plugins, because it would block. The expected number of milliseconds to wait before retry may be provided in args., BLOCKED - Thread was blocked http.max.delays times during fetching.",
+              "doc": "A protocol response code which can be one of SUCCESS - metaContentAttr was retrieved without errors, FAILED - Content was not retrieved. Any further errors may be indicated in args, PROTO_NOT_FOUND - This protocol was not found. Application may attempt to retry later, GONE - Resource is gone, MOVED - Resource has moved permanently. New url should be found in args, TEMP_MOVED - Resource has moved temporarily. New url should be found in args., NOTFOUND - Resource was not found, RETRY - Temporary failure. Application may retry immediately., EXCEPTION - Unspecified exception occured. Further information may be provided in args., ACCESS_DENIED - Access denied - authorization required, but missing\/incorrect., ROBOTS_DENIED - Access denied by robots.txt rules., REDIR_EXCEEDED - Too many redirects., NOTFETCHING - Not fetching., NOTMODIFIED - Unchanged since the last fetch., WOULDBLOCK - Request was refused by protocol plugins, because it would block. The expected number of milliseconds to wait before retry may be provided in args., BLOCKED - Thread was blocked http.max.delays times during fetching.",
               "default": 0
             },
             {
@@ -94,12 +94,12 @@
       "default": null
     },
     {
-      "name": "content",
+      "name": "metaContentAttr",
       "type": [
         "null",
         "bytes"
       ],
-      "doc": "The entire raw document content e.g. raw XHTML",
+      "doc": "The entire raw document metaContentAttr e.g. raw XHTML",
       "default": null
     },
     {
@@ -108,7 +108,7 @@
         "null",
         "string"
       ],
-      "doc": "The type of the content contained within the document itself. ContentType is an alias for MimeType. Historically, this parameter was only called MimeType, but since this is actually the value included in the HTTP Content-Type header, it can also include the character set encoding, which makes it more than just a MimeType specification. If MimeType is specified e.g. not None, that value is used. Otherwise, ContentType is used. If neither is given, the DEFAULT_CONTENT_TYPE setting is used.",
+      "doc": "The type of the metaContentAttr contained within the document itself. ContentType is an alias for MimeType. Historically, this parameter was only called MimeType, but since this is actually the value included in the HTTP Content-Type header, it can also include the character set encoding, which makes it more than just a MimeType specification. If MimeType is specified e.g. not None, that value is used. Otherwise, ContentType is used. If neither is given, the DEFAULT_CONTENT_TYPE setting is used.",
       "default": null
     },
     {
@@ -144,7 +144,7 @@
         "null",
         "string"
       ],
-      "doc": "The textual content of the WebPage devoid from native markup.",
+      "doc": "The textual metaContentAttr of the WebPage devoid from native markup.",
       "default": null
     },
     {
@@ -166,7 +166,7 @@
             {
               "name": "minorCode",
               "type": "int",
-              "doc": "Minor parsing status' including SUCCESS_OK - Successful parse devoid of anomalies or issues, SUCCESS_REDIRECT - Parsed content contains a directive to redirect to another URL. The target URL can be retrieved from the arguments., FAILED_EXCEPTION - Parsing failed. An Exception occured which may be retrieved from the arguments., FAILED_TRUNCATED - Parsing failed. Content was truncated, but the parser cannot handle incomplete content., FAILED_INVALID_FORMAT - Parsing failed. Invalid format e.g. the content may be corrupted or of wrong type., FAILED_MISSING_PARTS - Parsing failed. Other related parts of the content are needed to complete parsing. The list of URLs to missing parts may be provided in arguments. The Fetcher may decide to fetch these parts at once, then put them into Content.metadata, and supply them for re-parsing., FAILED_MISING_CONTENT - Parsing failed. There was no content to be parsed - probably caused by errors at protocol stage.",
+              "doc": "Minor parsing status' including SUCCESS_OK - Successful parse devoid of anomalies or issues, SUCCESS_REDIRECT - Parsed metaContentAttr contains a directive to redirect to another URL. The target URL can be retrieved from the arguments., FAILED_EXCEPTION - Parsing failed. An Exception occured which may be retrieved from the arguments., FAILED_TRUNCATED - Parsing failed. Content was truncated, but the parser cannot handle incomplete metaContentAttr., FAILED_INVALID_FORMAT - Parsing failed. Invalid format e.g. the metaContentAttr may be corrupted or of wrong type., FAILED_MISSING_PARTS - Parsing failed. Other related parts of the metaContentAttr are needed to complete parsing. The list of URLs to missing parts may be provided in arguments. The Fetcher may decide to fetch these parts at once, then put them into Content.metadata, and supply them for re-parsing., FAILED_MISING_CONTENT - Parsing failed. There was no metaContentAttr to be parsed - probably caused by errors at protocol stage.",
               "default": 0
             },
             {
@@ -209,7 +209,7 @@
           "string"
         ]
       },
-      "doc": "Header information returned from the web server used to server the content which is subsequently fetched from. This includes keys such as TRANSFER_ENCODING, CONTENT_ENCODING, CONTENT_LANGUAGE, CONTENT_LENGTH, CONTENT_LOCATION, CONTENT_DISPOSITION, CONTENT_MD5, CONTENT_TYPE, LAST_MODIFIED and LOCATION.",
+      "doc": "Header information returned from the web server used to server the metaContentAttr which is subsequently fetched from. This includes keys such as TRANSFER_ENCODING, CONTENT_ENCODING, CONTENT_LANGUAGE, CONTENT_LENGTH, CONTENT_LOCATION, CONTENT_DISPOSITION, CONTENT_MD5, CONTENT_TYPE, LAST_MODIFIED and LOCATION.",
       "default": {
         
       }

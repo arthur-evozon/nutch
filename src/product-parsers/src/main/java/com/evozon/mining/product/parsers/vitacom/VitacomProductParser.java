@@ -17,7 +17,7 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String extractedPriceData = ProductParserUtils.extractText(document.getElementsByClass(priceWholeSelector));
+		String extractedPriceData = ProductParserUtils.extractFirstChildText(document.getElementsByClass(priceWholeSelector));
 		if (StringUtils.isBlank(extractedPriceData)) {
 			return null;
 		}
@@ -44,7 +44,7 @@ public class VitacomProductParser extends DefaultProductParser implements com.ev
 
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		String extractedPriceData = ProductParserUtils.extractText(document.getElementsByClass(selector));
+		String extractedPriceData = ProductParserUtils.extractFirstChildText(document.getElementsByClass(selector));
 		if (StringUtils.isBlank(extractedPriceData)) {
 			return null;
 		}

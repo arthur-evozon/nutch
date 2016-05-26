@@ -1,4 +1,4 @@
-package com.evozon.mining.product.parsers.altex;
+package com.evozon.mining.product.parsers.evomag;
 
 import com.evozon.mining.product.parsers.DefaultProductParser;
 import com.evozon.mining.product.parsers.ProductParser;
@@ -9,44 +9,43 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AltexProductParser extends DefaultProductParser implements ProductParser {
-	private static final Logger LOG = LoggerFactory.getLogger(AltexProductParser.class);
+public class EvomagProductParser extends DefaultProductParser implements ProductParser {
+	private static final Logger LOG = LoggerFactory.getLogger(EvomagProductParser.class);
 	static final String META_CONTENT_ATTR = "content";
+	static final String[] DETAILS_NESTED_SELECT_PATTERN = new String[]{"tr", "td"};
 
 	private final String metaContentAttr;
+	private final String[] detailsNestedSelectPattern;
 
-	public AltexProductParser() {
-		this(META_CONTENT_ATTR);
+	public EvomagProductParser() {
+		this(META_CONTENT_ATTR, DETAILS_NESTED_SELECT_PATTERN);
 	}
 
-	public AltexProductParser(String metaContentAttr) {
+	public EvomagProductParser(String metaContentAttr, String ... detailsNestedSelectPattern) {
 		this.metaContentAttr = metaContentAttr;
+		this.detailsNestedSelectPattern = detailsNestedSelectPattern;
 	}
 
 	@Override
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
-		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document, metaSelectors));
+		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesWithSelectorPattern(document, metaSelectors,
+				detailsNestedSelectPattern));
 	}
 
 	@Override
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String priceStr = ProductParserUtils.extractFirstAttrText(document, metaContentAttr,priceWholeSelector);
-		if( StringUtils.isBlank( priceStr )) {
+		String priceStr = ProductParserUtils.extractFirstChildText(document, priceWholeSelector);
+		if (StringUtils.isBlank(priceStr)) {
 			return null;
 		}
 
 		String[] priceTokens = priceStr.split(",");
-		if( priceTokens.length != 2 ) {
+		if (priceTokens.length != 2) {
 			return null;
 		}
 
 		String priceWhole = priceTokens[0].replaceAll("[^\\d]", "");
-		String[] pricePartTokens = priceTokens[1].split(" ");
-		if( pricePartTokens.length != 2 ) {
-			return null;
-		}
-
-		String pricePart = pricePartTokens[0];
+		String pricePart = priceTokens[1];
 
 		return Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
 	}

@@ -119,12 +119,12 @@ public class DefaultProductParser implements ProductParser {
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
-		return ProductParserUtils.extractText(document, selector);
+		return ProductParserUtils.extractFirstChildText(document, selector);
 	}
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String priceWhole = ProductParserUtils.extractText(document, priceWholeSelector).replaceAll("[^\\d]", "");
-		String pricePart = ProductParserUtils.extractText(document, pricePartSelector).replaceAll("[^\\d]", "");
+		String priceWhole = ProductParserUtils.extractFirstChildText(document, priceWholeSelector).replaceAll("[^\\d]", "");
+		String pricePart = ProductParserUtils.extractFirstChildText(document, pricePartSelector).replaceAll("[^\\d]", "");
 		if (StringUtils.isBlank(priceWhole)) {
 			return null;
 		}
@@ -133,7 +133,7 @@ public class DefaultProductParser implements ProductParser {
 	}
 
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return ProductParserUtils.extractText(document, selector);
+		return ProductParserUtils.extractFirstChildText(document, selector);
 	}
 
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {

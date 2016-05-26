@@ -11,9 +11,9 @@
 </property>
 
 <property>
-  <name>content.server.port</name>
+  <name>metaContentAttr.server.port</name>
   <value>55000</value>
-  <description>Port of http server serving content.</description>
+  <description>Port of http server serving metaContentAttr.</description>
 </property>
 
 <property>
