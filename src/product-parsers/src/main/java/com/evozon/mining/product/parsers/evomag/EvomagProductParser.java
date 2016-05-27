@@ -27,12 +27,6 @@ public class EvomagProductParser extends DefaultProductParser implements Product
 	}
 
 	@Override
-	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
-		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesWithSelectorPattern(document, metaSelectors,
-				detailsNestedSelectPattern));
-	}
-
-	@Override
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
 		String priceStr = ProductParserUtils.extractFirstChildText(document, priceWholeSelector);
 		if (StringUtils.isBlank(priceStr)) {
@@ -53,5 +47,11 @@ public class EvomagProductParser extends DefaultProductParser implements Product
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
 		return ProductParserUtils.extractFirstAttrText(document, metaContentAttr, selector);
+	}
+
+	@Override
+	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
+		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesWithSelectorPattern(document, metaSelectors,
+				detailsNestedSelectPattern));
 	}
 }
