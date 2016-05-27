@@ -34,12 +34,11 @@ public class ProductParserUtils {
 		if (elements != null && elements.size() > 0) {
 			Element element = elements.get(0);
 			for (Node child : element.childNodes()) {
-				ret = child.toString();
 				if (child instanceof TextNode) {
 					ret = ((TextNode) child).text();
 				}
 
-				if (--nth <= 0) {
+				if (StringUtils.isNotBlank(ret) && --nth <= 0) {
 					break;
 				}
 			}

@@ -116,9 +116,9 @@ public class DefaultProductParser implements ProductParser {
 		}
 
 		if (LOG.isTraceEnabled()) {
-			LOG.trace(">>>> Stored product [ '{}' : {}{} ] \n\t{}", productName, price, priceCurrency, productDetails);
+			LOG.trace(">>>> Stored product [ '{}' : {}{} ]\n\tDetails:{}", productName, price, priceCurrency, productDetails);
 		} else {
-			LOG.debug(">>>> Stored product [ '{}' : {} ] \n\t{}", productName, price, priceCurrency);
+			LOG.debug(">>>> Stored product [ '{}' : {}{} ]", productName, price, priceCurrency);
 		}
 	}
 
