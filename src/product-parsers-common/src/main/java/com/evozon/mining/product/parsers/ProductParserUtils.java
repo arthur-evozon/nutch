@@ -239,6 +239,10 @@ public class ProductParserUtils {
 	}
 
 	public static String buildValueString(Collection<String> content) {
+		return buildValueString(content, " | ");
+	}
+
+	public static String buildValueString(Collection<String> content, String lineSeparator) {
 		StringBuilder ret = new StringBuilder();
 
 		if (content == null || content.size() < 1) {
@@ -248,7 +252,7 @@ public class ProductParserUtils {
 		for (Iterator<String> itr = content.iterator(); itr.hasNext(); ) {
 			ret.append(itr.next());
 			if (itr.hasNext()) {
-				ret.append("\n");
+				ret.append(lineSeparator);
 			}
 		}
 
