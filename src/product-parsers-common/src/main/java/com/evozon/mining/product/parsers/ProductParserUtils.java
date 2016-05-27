@@ -201,11 +201,10 @@ public class ProductParserUtils {
 					}
 
 					List<Node> valueElementText = valueElement.childNodes();
-					if (valueElementText == null || valueElementText.size() != 1) {
+					String value = buildValueString(extractTextContentFrom(valueElementText));
+					if (StringUtils.isBlank(value)) {
 						return nameValues;
 					}
-
-					String value = valueElementText.get(0).toString().trim();
 
 					if (!nameValues.containsKey(key)) {
 						nameValues.put(key, new HashSet<String>());
@@ -222,6 +221,38 @@ public class ProductParserUtils {
 
 		selectors.addFirst(currentSelector);
 		return nameValues;
+	}
+
+	public static List<String> extractTextContentFrom(List<Node> valueNodes) {
+		if (valueNodes == null || valueNodes.size() < 1) {
+			return Collections.emptyList();
+		}
+
+		List<String> content = new ArrayList<>();
+		for (Node node : valueNodes) {
+			if (node instanceof TextNode) {
+				content.add(node.toString().trim());
+			}
+		}
+
+		return content;
+	}
+
+	public static String buildValueString(Collection<String> content) {
+		StringBuilder ret = new StringBuilder();
+
+		if (content == null || content.size() < 1) {
+			return "";
+		}
+
+		for (Iterator<String> itr = content.iterator(); itr.hasNext(); ) {
+			ret.append(itr.next());
+			if (itr.hasNext()) {
+				ret.append("\n");
+			}
+		}
+
+		return ret.toString();
 	}
 
 	public static String buildNameValuesString(Map<String, Set<String>> nameValues) {
