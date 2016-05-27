@@ -35,6 +35,9 @@ public class AltexProductParser extends DefaultProductParser implements ProductP
 			return null;
 		}
 
+		// replace html '&nbsp;'es with " "
+		priceStr = priceStr.replaceAll("\u00a0"," ");
+
 		String[] priceTokens = priceStr.split(",");
 		if( priceTokens.length != 2 ) {
 			return null;

@@ -115,7 +115,11 @@ public class DefaultProductParser implements ProductParser {
 			metadata.put(new Utf8(ProductParserConstants.PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
 		}
 
-		LOG.debug("\n\t>>>> Stored product [ '{}' : {}{} ] \n\t{}", productName, price, priceCurrency, productDetails);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace(">>>> Stored product [ '{}' : {}{} ] \n\t{}", productName, price, priceCurrency, productDetails);
+		} else {
+			LOG.debug(">>>> Stored product [ '{}' : {} ] \n\t{}", productName, price, priceCurrency);
+		}
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
