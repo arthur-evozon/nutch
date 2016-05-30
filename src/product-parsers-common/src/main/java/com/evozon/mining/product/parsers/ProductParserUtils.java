@@ -181,10 +181,10 @@ public class ProductParserUtils {
 		Map<String, Set<String>> nameValues = new HashMap<>();
 		String currentSelector = selectors.removeFirst();
 
-		for (Element currentElement : root.select(currentSelector)) {
-			if (selectors.size() > 0) {
-				nameValues.putAll(buildNestedNameValues(currentElement, selectors));
-			} else {
+		for (Element node : root.select(currentSelector)) {
+			if (selectors.size() > 0) { // we are still drilling down the chain
+				nameValues.putAll(buildNestedNameValues(node, selectors));
+			} else { // we have run out of selector elements
 				Elements leaf = root.select(currentSelector);
 				if (leaf.size() >= 2) {
 					Element valueElement = leaf.last();
