@@ -14,10 +14,10 @@
 <ivy-module version="1.0">
   <info organisation="org.apache.nutch" module="nutch">
     <license name="Apache 2.0"
-      url="http://www.apache.org/licenses/LICENSE-2.0.txt/" />
+             url="http://www.apache.org/licenses/LICENSE-2.0.txt/" />
     <ivyauthor name="Apache Nutch Team" url="http://nutch.apache.org" />
     <description homepage="http://nutch.apache.org">Nutch is an open source web-search
-      software. It builds on Hadoop, Tika and Solr, adding web-specifics, such as a crawler, 
+      software. It builds on Hadoop, Tika and Solr, adding web-specifics, such as a crawler,
       a link-graph database etc.
     </description>
   </info>
@@ -32,24 +32,27 @@
   </publications>
 
   <dependencies>
+    <dependency org="org.apache.solr" name="solr-core" rev="4.6.0"
+                conf="*->default" />
+
     <dependency org="org.apache.solr" name="solr-solrj" rev="4.6.0"
-      conf="*->default" />
+                conf="*->default" />
     <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1"
-      conf="*->master" />
+                conf="*->master" />
 
     <dependency org="commons-lang" name="commons-lang" rev="2.4"
-      conf="*->default" />
+                conf="*->default" />
     <dependency org="commons-collections" name="commons-collections"
-      rev="3.1" conf="*->default" />
+                rev="3.1" conf="*->default" />
     <dependency org="org.apache.httpcomponents" name="httpclient"
-      rev="4.2.5" conf="*->master" />
+                rev="4.3" conf="*->master" />
     <dependency org="commons-codec" name="commons-codec" rev="1.3"
-      conf="*->default" />
+                conf="*->default" />
 
     <dependency org="org.apache.commons" name="commons-compress" rev="1.9" conf="*->default" />
 
     <!-- Hadoop Dependencies -->
-    <dependency org="org.apache.hadoop" name="hadoop-common" rev="2.7.1" conf="*->default">
+    <dependency org="org.apache.hadoop" name="hadoop-common" rev="2.7.2" conf="*->default">
       <exclude org="hsqldb" name="hsqldb" />
       <exclude org="net.sf.kosmosfs" name="kfs" />
       <exclude org="net.java.dev.jets3t" name="jets3t" />
@@ -57,9 +60,9 @@
       <exclude org="org.mortbay.jetty" name="jsp-*" />
       <exclude org="ant" name="ant" />
     </dependency>
-    <dependency org="org.apache.hadoop" name="hadoop-hdfs" rev="2.7.1" conf="*->default"/>
-    <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-core" rev="2.7.1" conf="*->default"/>
-    <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-jobclient" rev="2.7.1" conf="*->default"/>
+    <dependency org="org.apache.hadoop" name="hadoop-hdfs" rev="2.7.2" conf="*->default"/>
+    <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-core" rev="2.7.2" conf="*->default"/>
+    <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-jobclient" rev="2.7.2" conf="*->default"/>
     <!-- End of Hadoop Dependencies -->
 
     <dependency org="com.ibm.icu" name="icu4j" rev="55.1" />
@@ -77,7 +80,7 @@
 
     <dependency org="com.google.guava" name="guava" rev="12.0.1" />
     <dependency org="com.google.code.crawler-commons" name="crawler-commons" rev="0.5" />
-    
+
     <dependency org="org.restlet.jse" name="org.restlet" rev="2.2.3" conf="*->default" />
     <dependency org="org.restlet.jse" name="org.restlet.ext.jackson" rev="2.2.3" conf="*->default" />
     <dependency org="org.restlet.jse" name="org.restlet.ext.jaxrs" rev="2.2.3" conf="*->default" />
@@ -93,56 +96,59 @@
     <dependency org="org.jdom" name="jdom" rev="1.1" conf="test->default"/>
     <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
     <dependency org="org.springframework" name="spring-test" rev="4.0.4.RELEASE" conf="test->default"/>
-	
+
 
     <!--================-->
     <!-- Gora artifacts -->
     <!--================-->
-    <!-- N.B. To use Gora SNAPSHOT's merely replace the 'ref' value with the SNAPSHOT version 
+    <!-- N.B. To use Gora SNAPSHOT's merely replace the 'ref' value with the SNAPSHOT version
     and add changing="true" alongside the dependency declaration. An example has been
     provided for the gora-core dependency as below -->
     <dependency org="org.apache.gora" name="gora-core" rev="0.7-SNAPSHOT" conf="*->default"/>
     <dependency org="org.apache.gora" name="gora-solr" rev="0.7-SNAPSHOT" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-hbase" rev="0.7-SNAPSHOT" conf="*->default" /> 
+    <dependency org="org.apache.gora" name="gora-hbase" rev="0.7-SNAPSHOT" conf="*->default" />
     <dependency org="org.apache.gora" name="gora-compiler-cli" rev="0.7-SNAPSHOT" conf="*->default"/>
     <dependency org="org.apache.gora" name="gora-compiler" rev="0.7-SNAPSHOT" conf="*->default"/>
 
     <dependency org="org.jsoup" name="jsoup" rev="1.8.3" conf="*->default"/>
 
+    <dependency org="com.evozon.mining" name="nutch-product-parsers-common" rev="1.0-SNAPSHOT" conf="*->default"/>
+    <dependency org="com.evozon.mining" name="nutch-product-parsers" rev="1.0-SNAPSHOT" conf="*->default"/>
+
     <dependency org="net.sourceforge.htmlcleaner" name="htmlcleaner" rev="2.2" conf="*->default"/>
     <dependency org="jaxen" name="jaxen" rev="1.1.4" conf="*->default"/>
 
-    <!-- Uncomment this to use SQL as Gora backend. It should be noted that the 
-    gora-sql 0.1.1-incubating artifact is NOT compatable with gora-core 0.3. Users should 
+    <!-- Uncomment this to use SQL as Gora backend. It should be noted that the
+    gora-sql 0.1.1-incubating artifact is NOT compatable with gora-core 0.3. Users should
     downgrade to gora-core 0.2.1 in order to use SQL as a backend however this is not suggested. -->
     <!--
     <dependency org="org.apache.gora" name="gora-sql" rev="0.1.1-incubating" conf="*->default" />
     -->
     <!-- Uncomment this to use MySQL as database with SQL as Gora store. -->
     <!--
-    <dependency org="mysql" name="mysql-connector-java" rev="5.1.18" conf="*->default"/> 
-    -->    
- 
+    <dependency org="mysql" name="mysql-connector-java" rev="5.1.18" conf="*->default"/>
+    -->
+
     <!-- Uncomment this to use Accumulo as Gora backend. -->
     <!--
     <dependency org="org.apache.gora" name="gora-accumulo" rev="0.6.1" conf="*->default" />
     -->
     <!-- Uncomment this to use Cassandra as Gora backend. -->
-    <!-- 
+    <!--
     <dependency org="org.apache.gora" name="gora-cassandra" rev="0.6.1" conf="*->default" />
     -->
     <!-- Uncomment this to use MongoDB as Gora backend. -->
     <!--
     <dependency org="org.apache.gora" name="gora-mongodb" rev="0.6.1" conf="*->default" />
-    -->    
+    -->
     <!-- Uncomment this to use Solr as Gora backend. -->
     <!--
     <dependency org="org.apache.gora" name="gora-solr" rev="0.6.1" conf="*->default" />
     -->
     <!-- The gora-compiler is used within the 'ant generate-gora-src' target to compile
-    the Gora .avsc files within ./src/gora 
+    the Gora .avsc files within ./src/gora
     -->
-    
+
     <!-- web app dependencies -->
 
     <dependency org="org.apache.commons" name="commons-collections4" rev="4.0" conf="*->default" />
@@ -151,11 +157,11 @@
     <dependency org="org.springframework" name="spring-web" rev="4.0.4.RELEASE" conf="*->default" />
 
     <dependency org="com.sun.jersey" name="jersey-client" rev="1.8" conf="*->default" />
-	
+
     <dependency org="com.j256.ormlite" name="ormlite-jdbc" rev="4.48" conf="*->default" />
     <dependency org="com.h2database" name="h2" rev="1.4.180" conf="*->default" />
     <dependency org="org.eclipse.persistence" name="javax.persistence" rev="2.0.0" conf="*->default" />
-	
+
     <dependency org="org.apache.wicket" name="wicket-core" rev="6.16.0" conf="*->default" />
     <dependency org="org.apache.wicket" name="wicket-spring" rev="6.16.0" conf="*->default" />
     <dependency org="de.agilecoders.wicket" name="wicket-bootstrap-core" rev="0.9.2" conf="*->default" />
