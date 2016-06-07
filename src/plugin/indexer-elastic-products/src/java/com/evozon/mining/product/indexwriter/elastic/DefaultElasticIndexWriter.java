@@ -88,8 +88,7 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 
 		// Prefer TransportClient
 		if (host != null && port > 1) {
-			client = new TransportClient(settings)
-					.addTransportAddress(new InetSocketTransportAddress(host, port));
+			client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(host, port));
 		} else if (clusterName != null) {
 			node = nodeBuilder().settings(settings).client(true).node();
 			client = node.client();
