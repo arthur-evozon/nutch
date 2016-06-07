@@ -32,10 +32,10 @@
   </publications>
 
   <dependencies>
-    <dependency org="org.apache.solr" name="solr-core" rev="4.6.0"
+    <dependency org="org.apache.solr" name="solr-core" rev="4.10.2"
                 conf="*->default" />
 
-    <dependency org="org.apache.solr" name="solr-solrj" rev="4.6.0"
+    <dependency org="org.apache.solr" name="solr-solrj" rev="4.10.2"
                 conf="*->default" />
     <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1"
                 conf="*->master" />
