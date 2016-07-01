@@ -13,15 +13,18 @@ public class EvomagProductParser extends DefaultProductParser implements Product
 	private static final Logger LOG = LoggerFactory.getLogger(EvomagProductParser.class);
 	static final String META_CONTENT_ATTR = "content";
 	static final String[] DETAILS_NESTED_SELECT_PATTERN = new String[]{"tr", "td"};
+	static final String PRICE_TOKEN_SEPARATOR = "\\.";
 
+	private final String priceTokensSeparator;
 	private final String metaContentAttr;
 	private final String[] detailsNestedSelectPattern;
 
 	public EvomagProductParser() {
-		this(META_CONTENT_ATTR, DETAILS_NESTED_SELECT_PATTERN);
+		this(PRICE_TOKEN_SEPARATOR, META_CONTENT_ATTR, DETAILS_NESTED_SELECT_PATTERN);
 	}
 
-	public EvomagProductParser(String metaContentAttr, String ... detailsNestedSelectPattern) {
+	public EvomagProductParser(String priceTokensSeparator, String metaContentAttr, String... detailsNestedSelectPattern) {
+		this.priceTokensSeparator = priceTokensSeparator;
 		this.metaContentAttr = metaContentAttr;
 		this.detailsNestedSelectPattern = detailsNestedSelectPattern;
 	}
@@ -33,7 +36,7 @@ public class EvomagProductParser extends DefaultProductParser implements Product
 			return null;
 		}
 
-		String[] priceTokens = priceStr.split(",");
+		String[] priceTokens = priceStr.split(priceTokensSeparator);
 		if (priceTokens.length != 2) {
 			return null;
 		}
