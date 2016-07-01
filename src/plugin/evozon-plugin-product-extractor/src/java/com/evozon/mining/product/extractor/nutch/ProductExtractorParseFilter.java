@@ -22,16 +22,12 @@ import java.util.*;
 public class ProductExtractorParseFilter implements ParseFilter {
 	private static final Logger LOG = LoggerFactory.getLogger(ProductExtractorParseFilter.class);
 
+	private static final Collection<WebPage.Field> FIELDS = new HashSet<>();
+	private static final List<String> htmlMimeTypes = Arrays.asList(new String[]{"text/html", "application/xhtml+xml"});
 	static final Map<String, ProductParser> PARSER_MAP = new HashMap<>();
 
-	private static final List<String> htmlMimeTypes = Arrays.asList(new String[]{"text/html", "application/xhtml+xml"});
-
-	// Configuration
-	private Configuration configuration;
+	private Configuration conf;
 	private String defaultEncoding;
-
-
-	private static final Collection<WebPage.Field> FIELDS = new HashSet<>();
 
 	static {
 		FIELDS.add(WebPage.Field.CONTENT);
@@ -63,8 +59,20 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		}
 	}
 
+	@Override
+	public Configuration getConf() {
+		return conf;
+	}
 
-	private Configuration conf;
+	@Override
+	public void setConf(Configuration conf) {
+		this.conf = conf;
+	}
+
+	@Override
+	public Collection<WebPage.Field> getFields() {
+		return FIELDS;
+	}
 
 	@Override
 	public Parse filter(String url, WebPage page, Parse parse, HTMLMetaTags metaTags, DocumentFragment doc) {
@@ -86,18 +94,4 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 		return parse;
 	}
-
-	public Configuration getConf() {
-		return conf;
-	}
-
-	public void setConf(Configuration conf) {
-		this.conf = conf;
-	}
-
-	@Override
-	public Collection<WebPage.Field> getFields() {
-		return FIELDS;
-	}
-
 }
