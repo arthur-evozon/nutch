@@ -1,6 +1,5 @@
 package com.evozon.mining.product.parsers;
 
-import org.apache.avro.util.Utf8;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.nutch.storage.WebPage;
 import org.jsoup.Jsoup;
@@ -108,11 +107,11 @@ public class DefaultProductParser implements ProductParser {
 
 		Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
 
-		metadata.put(new Utf8(ProductParserConstants.PRODUCT_KEY), ByteBuffer.wrap(productName.getBytes()));
-		metadata.put(new Utf8(ProductParserConstants.PRODUCT_PRICE), ByteBuffer.wrap(ProductParserUtils.toByteArray(price)));
-		metadata.put(new Utf8(ProductParserConstants.PRODUCT_CURRENCY), ByteBuffer.wrap(priceCurrency.getBytes()));
+		metadata.put(ProductParserConstants.META_KEY_PRODUCT_NAME, ByteBuffer.wrap(productName.getBytes()));
+		metadata.put(ProductParserConstants.META_KEY_PRODUCT_PRICE, ByteBuffer.wrap(ProductParserUtils.toByteArray(price)));
+		metadata.put(ProductParserConstants.META_KEY_PRODUCT_CURRENCY, ByteBuffer.wrap(priceCurrency.getBytes()));
 		if (productDetails.length() > 0) {
-			metadata.put(new Utf8(ProductParserConstants.PRODUCT_DETAILS), ByteBuffer.wrap(productDetails.getBytes()));
+			metadata.put(ProductParserConstants.META_KEY_PRODUCT_DETAILS, ByteBuffer.wrap(productDetails.getBytes()));
 		}
 
 		if (LOG.isTraceEnabled()) {

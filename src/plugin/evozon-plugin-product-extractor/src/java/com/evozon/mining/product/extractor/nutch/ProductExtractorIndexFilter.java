@@ -35,7 +35,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 
 
 	public NutchDocument filter(NutchDocument doc, String url, WebPage page) throws IndexingException {
-		ByteBuffer productDefinition = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_KEY));
+		ByteBuffer productDefinition = page.getMetadata().get(ProductParserConstants.META_KEY_PRODUCT_NAME);
 		if (productDefinition == null || productDefinition.remaining() == 0) {
 			return doc;
 		}
@@ -44,7 +44,7 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		// the addIndexBackendOptions method.
 		String productName = new String(productDefinition.array());
 
-		ByteBuffer productPriceBytes = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_PRICE));
+		ByteBuffer productPriceBytes = page.getMetadata().get(ProductParserConstants.META_KEY_PRODUCT_PRICE);
 		if (productPriceBytes == null || productPriceBytes.remaining() == 0) {
 			return doc;
 		}
@@ -52,20 +52,20 @@ public class ProductExtractorIndexFilter implements IndexingFilter {
 		double productPrice = ProductParserUtils.toDouble(productPriceBytes.array());
 		String priceStr = String.format("%.2f", productPrice);
 
-		ByteBuffer productCurrencyBytes = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_CURRENCY));
+		ByteBuffer productCurrencyBytes = page.getMetadata().get(ProductParserConstants.META_KEY_PRODUCT_CURRENCY);
 		if (productCurrencyBytes == null || productCurrencyBytes.remaining() == 0) {
 			return doc;
 		}
 
 		String productCurrency = new String(productCurrencyBytes.array());
 
-		doc.add(ProductParserConstants.PRODUCT_KEY, productName);
+		doc.add(ProductParserConstants.PRODUCT_NAME, productName);
 		doc.add(ProductParserConstants.PRODUCT_PRICE, priceStr);
 		doc.add(ProductParserConstants.PRODUCT_CURRENCY, productCurrency);
 
 		LOG.info("\n\t>>>> Adding product: [ {} : {} {} ] for URL: {}", productName, priceStr, productCurrency, url.toString());
 
-		ByteBuffer productDetailsBuffer = page.getMetadata().get(new Utf8(ProductParserConstants.PRODUCT_DETAILS));
+		ByteBuffer productDetailsBuffer = page.getMetadata().get(ProductParserConstants.META_KEY_PRODUCT_DETAILS);
 		if (productDetailsBuffer == null || productDetailsBuffer.remaining() == 0) {
 			return doc;
 		}
