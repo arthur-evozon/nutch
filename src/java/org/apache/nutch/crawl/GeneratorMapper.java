@@ -105,9 +105,6 @@ public class GeneratorMapper extends GoraMapper<String, WebPage, SelectorEntry, 
 			// ignore
 		}
 		entry.set(url, score);
-
-		GeneratorJob.LOG.trace(">>>> emitting '{}'", entry);
-
 		context.write(entry, page);
 
 		skippedCounter.increment(-1);
