@@ -56,7 +56,8 @@ public class GeneratorMapper extends GoraMapper<String, WebPage, SelectorEntry, 
 
 		final Counter skippedCounter = context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_SKIPPED);
 		final Counter visitedCounter = context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_VISITED);
-		skippedCounter.increment(1);
+
+		skippedCounter.increment(1);// assume we will skip this page
 		visitedCounter.increment(1);
 
 		if (Mark.GENERATE_MARK.checkMark(page) != null) {
@@ -107,6 +108,7 @@ public class GeneratorMapper extends GoraMapper<String, WebPage, SelectorEntry, 
 		entry.set(url, score);
 		context.write(entry, page);
 
+		// we reached this point, therefore this record was not skipped
 		skippedCounter.increment(-1);
 	}
 
