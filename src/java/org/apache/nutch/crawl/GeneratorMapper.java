@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.apache.nutch.crawl;
 
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.nutch.crawl.GeneratorJob.SelectorEntry;
 import org.apache.nutch.net.URLFilterException;
 import org.apache.nutch.net.URLFilters;
@@ -31,97 +32,102 @@ import org.apache.nutch.util.TableUtil;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-public class GeneratorMapper extends
-GoraMapper<String, WebPage, SelectorEntry, WebPage> {
+import static org.apache.nutch.crawl.GeneratorJob.COUNTER_GROUP_GENERATE;
 
-  private URLFilters filters;
-  private URLNormalizers normalizers;
-  private boolean filter;
-  private boolean normalise;
-  private boolean sitemap;
-  private FetchSchedule schedule;
-  private ScoringFilters scoringFilters;
-  private long curTime;
-  private SelectorEntry entry = new SelectorEntry();
-  private int maxDistance;
+public class GeneratorMapper extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
 
-  @Override
-  public void map(String reversedUrl, WebPage page, Context context)
-      throws IOException, InterruptedException {
-    String url = TableUtil.unreverseUrl(reversedUrl);
+	static final String COUNTER_SKIPPED = "SKIPPED";
+	static final String COUNTER_VISITED = "VISITED";
 
-    if (Mark.GENERATE_MARK.checkMark(page) != null) {
-      GeneratorJob.LOG.debug("Skipping {}; already generated", url);
-      return;
-    }
+	private URLFilters filters;
+	private URLNormalizers normalizers;
+	private boolean filter;
+	private boolean normalise;
+	private boolean sitemap;
+	private FetchSchedule schedule;
+	private ScoringFilters scoringFilters;
+	private long curTime;
+	private SelectorEntry entry = new SelectorEntry();
+	private int maxDistance;
 
-    // filter on distance
-    if (maxDistance > -1) {
-      CharSequence distanceUtf8 = page.getMarkers().get(DbUpdaterJob.DISTANCE);
-      if (distanceUtf8 != null) {
-        int distance = Integer.parseInt(distanceUtf8.toString());
-        if (distance > maxDistance) {
-          return;
-        }
-      }
-    }
+	@Override
+	public void map(String reversedUrl, WebPage page, Context context) throws IOException, InterruptedException {
+		String url = TableUtil.unreverseUrl(reversedUrl);
 
-    // If filtering is on don't generate URLs that don't pass URLFilters
-    try {
-      if (normalise) {
-        url = normalizers.normalize(url,
-            URLNormalizers.SCOPE_GENERATE_HOST_COUNT);
-      }
-      if (filter && filters.filter(url) == null)
-        return;
-      if ((sitemap && !URLFilters.isSitemap(page)) || !sitemap && URLFilters
-          .isSitemap(page))
-        return;
-    } catch (URLFilterException e) {
-      GeneratorJob.LOG
-      .warn("Couldn't filter url: {} ({})", url, e.getMessage());
-      return;
-    } catch (MalformedURLException e) {
-      GeneratorJob.LOG
-      .warn("Couldn't filter url: {} ({})", url, e.getMessage());
-      return;
-    }
+		final Counter skippedCounter = context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_SKIPPED);
+		final Counter visitedCounter = context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_VISITED);
+		skippedCounter.increment(1);
+		visitedCounter.increment(1);
 
-    // check fetch schedule
-    if (!schedule.shouldFetch(url, page, curTime)) {
-      if (GeneratorJob.LOG.isDebugEnabled()) {
-        GeneratorJob.LOG.debug("-shouldFetch rejected '" + url
-            + "', fetchTime=" + page.getFetchTime() + ", curTime=" + curTime);
-      }
-      return;
-    }
-    float score = page.getScore();
-    try {
-      score = scoringFilters.generatorSortValue(url, page, score);
-    } catch (ScoringFilterException e) {
-      // ignore
-    }
-    entry.set(url, score);
-    context.write(entry, page);
-  }
+		if (Mark.GENERATE_MARK.checkMark(page) != null) {
+			GeneratorJob.LOG.debug("Skipping {}; already generated", url);
+			return;
+		}
 
-  @Override
-  public void setup(Context context) {
-    Configuration conf = context.getConfiguration();
-    filter = conf.getBoolean(GeneratorJob.GENERATOR_FILTER, true);
-    normalise = conf.getBoolean(GeneratorJob.GENERATOR_NORMALISE, true);
-    sitemap = conf.getBoolean(GeneratorJob.GENERATOR_SITEMAP, false);
-    if (filter) {
-      filters = new URLFilters(conf);
-    }
-    if (normalise) {
-      normalizers = new URLNormalizers(conf,
-          URLNormalizers.SCOPE_GENERATE_HOST_COUNT);
-    }
-    maxDistance = conf.getInt("generate.max.distance", -1);
-    curTime = conf.getLong(GeneratorJob.GENERATOR_CUR_TIME,
-        System.currentTimeMillis());
-    schedule = FetchScheduleFactory.getFetchSchedule(conf);
-    scoringFilters = new ScoringFilters(conf);
-  }
+		// filter on distance
+		if (maxDistance > -1) {
+			CharSequence distanceUtf8 = page.getMarkers().get(DbUpdaterJob.DISTANCE);
+			if (distanceUtf8 != null) {
+				int distance = Integer.parseInt(distanceUtf8.toString());
+				if (distance > maxDistance) {
+					GeneratorJob.LOG.info("Filtered out {} on distance ({})", url, distance);
+					return;
+				}
+			}
+		}
+
+		// If filtering is on don't generate URLs that don't pass URLFilters
+		try {
+			if (normalise) {
+				url = normalizers.normalize(url, URLNormalizers.SCOPE_GENERATE_HOST_COUNT);
+			}
+			if (filter && filters.filter(url) == null) return;
+			if ((sitemap && !URLFilters.isSitemap(page)) || !sitemap && URLFilters.isSitemap(page)) return;
+		} catch (URLFilterException e) {
+			GeneratorJob.LOG.warn("Couldn't filter url: {} ({})", url, e.getMessage());
+			return;
+		} catch (MalformedURLException e) {
+			GeneratorJob.LOG.warn("Couldn't filter url: {} ({})", url, e.getMessage());
+			return;
+		}
+
+		// check fetch schedule
+		if (!schedule.shouldFetch(url, page, curTime)) {
+			if (GeneratorJob.LOG.isDebugEnabled()) {
+				GeneratorJob.LOG.debug("-shouldFetch rejected '" + url + "', fetchTime=" + page.getFetchTime() + ", curTime=" + curTime);
+			}
+			return;
+		}
+		float score = page.getScore();
+		try {
+			score = scoringFilters.generatorSortValue(url, page, score);
+		} catch (ScoringFilterException e) {
+			// ignore
+		}
+		entry.set(url, score);
+
+		GeneratorJob.LOG.trace(">>>> emitting '{}'", entry);
+
+		context.write(entry, page);
+
+		skippedCounter.increment(-1);
+	}
+
+	@Override
+	public void setup(Context context) {
+		Configuration conf = context.getConfiguration();
+		filter = conf.getBoolean(GeneratorJob.GENERATOR_FILTER, true);
+		normalise = conf.getBoolean(GeneratorJob.GENERATOR_NORMALISE, true);
+		sitemap = conf.getBoolean(GeneratorJob.GENERATOR_SITEMAP, false);
+		if (filter) {
+			filters = new URLFilters(conf);
+		}
+		if (normalise) {
+			normalizers = new URLNormalizers(conf, URLNormalizers.SCOPE_GENERATE_HOST_COUNT);
+		}
+		maxDistance = conf.getInt("generate.max.distance", -1);
+		curTime = conf.getLong(GeneratorJob.GENERATOR_CUR_TIME, System.currentTimeMillis());
+		schedule = FetchScheduleFactory.getFetchSchedule(conf);
+		scoringFilters = new ScoringFilters(conf);
+	}
 }
