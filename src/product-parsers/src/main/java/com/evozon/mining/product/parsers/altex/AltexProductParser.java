@@ -30,28 +30,15 @@ public class AltexProductParser extends DefaultProductParser implements ProductP
 
 	@Override
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
-		String priceStr = ProductParserUtils.extractFirstAttrText(document, metaContentAttr,priceWholeSelector);
-		if( StringUtils.isBlank( priceStr )) {
+		String priceStr = ProductParserUtils.extractFirstAttrText(document, metaContentAttr, priceWholeSelector);
+		if (StringUtils.isBlank(priceStr)) {
 			return null;
 		}
 
 		// replace html '&nbsp;'es with " "
-		priceStr = priceStr.replaceAll("\u00a0"," ");
+		priceStr = priceStr.replaceAll("\u00a0", " ").replaceAll("[^\\d]", "");
 
-		String[] priceTokens = priceStr.split(",");
-		if( priceTokens.length != 2 ) {
-			return null;
-		}
-
-		String priceWhole = priceTokens[0].replaceAll("[^\\d]", "");
-		String[] pricePartTokens = priceTokens[1].split(" ");
-		if( pricePartTokens.length != 2 ) {
-			return null;
-		}
-
-		String pricePart = pricePartTokens[0];
-
-		return Double.parseDouble(String.format("%s.%s", priceWhole, pricePart));
+		return Double.parseDouble(priceStr);
 	}
 
 	@Override
