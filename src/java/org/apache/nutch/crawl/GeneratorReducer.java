@@ -19,7 +19,6 @@ package org.apache.nutch.crawl;
 import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraReducer;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Counter;
 import org.apache.nutch.crawl.GeneratorJob.SelectorEntry;
 import org.apache.nutch.fetcher.FetcherJob.FetcherMapper;
 import org.apache.nutch.storage.Mark;
@@ -44,6 +43,7 @@ public class GeneratorReducer extends GoraReducer<SelectorEntry, WebPage, String
 	static final String COUNTER_GENERATE_MARK = "GENERATE_MARK";
 	static final String COUNTER_MALFORMED_URL = "MALFORMED_URL";
 
+	private long count;
 	private long limit;
 	private long maxCount;
 	private boolean byDomain = false;
@@ -52,10 +52,8 @@ public class GeneratorReducer extends GoraReducer<SelectorEntry, WebPage, String
 
 	@Override
 	protected void reduce(SelectorEntry key, Iterable<WebPage> values, Context context) throws IOException, InterruptedException {
-		Counter recordCounter = context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_GENERATE_MARK);
-
 		for (WebPage page : values) {
-			if (recordCounter.getValue() >= limit) {
+			if (count >= limit) {
 				return;
 			}
 			if (maxCount > 0) {
@@ -85,7 +83,8 @@ public class GeneratorReducer extends GoraReducer<SelectorEntry, WebPage, String
 				context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_MALFORMED_URL).increment(1);
 				continue;
 			}
-			recordCounter.increment(1);
+			count++;
+			context.getCounter(COUNTER_GROUP_GENERATE, COUNTER_GENERATE_MARK).increment(1);
 		}
 	}
 
