@@ -27,7 +27,7 @@
             http://www.ibiblio.net/pub/packages/maven2
     -->
     <property name="m2-pattern"
-              value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false" />
+              value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false"/>
 
     <property name="oss.sonatype.org"
               value="http://oss.sonatype.org/content/repositories/releases/"
