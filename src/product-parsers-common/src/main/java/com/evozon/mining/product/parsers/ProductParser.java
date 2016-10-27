@@ -15,5 +15,5 @@ public interface ProductParser {
 	 * @param url  the url currently being parsed
 	 * @param page the page currently being parsed
 	 */
-	void parse(String url, WebPage page);
+	boolean parse(String url, WebPage page);
 }

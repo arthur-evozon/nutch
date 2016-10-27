@@ -66,7 +66,7 @@ public class DefaultProductParser implements ProductParser {
 	 * @param page the page currently being parsed
 	 */
 	@Override
-	public void parse(String url, WebPage page) {
+	public boolean parse(String url, WebPage page) {
 		String nameSelector = selectorMap.get(NAME);
 		String priceWholeSelector = selectorMap.get(PRICE_WHOLE);
 		String pricePartSelector = selectorMap.get(PRICE_PART);
@@ -74,7 +74,7 @@ public class DefaultProductParser implements ProductParser {
 		String productDetailsSelector = selectorMap.get(META);
 
 		if (StringUtils.isBlank(nameSelector)) {
-			return;
+			return false;
 		}
 
 		LOG.trace("Extracting product from URL '{}'", url);
@@ -88,17 +88,17 @@ public class DefaultProductParser implements ProductParser {
 
 		String productName = parseProductName(url, page, document, nameSelector);
 		if (StringUtils.isBlank(productName)) {
-			return;
+			return false;
 		}
 
 		Double price = parseProductPrice(url, page, document, priceWholeSelector, pricePartSelector);
 		if (price == null) {
-			return;
+			return false;
 		}
 
 		String priceCurrency = parseProductPriceCurrency(url, page, document, priceCurrencySelector);
 		if (StringUtils.isBlank(priceCurrency)) {
-			return;
+			return false;
 		}
 
 		String productDetails = parseProductMeta(url, page, document, productDetailsSelector);
@@ -115,10 +115,12 @@ public class DefaultProductParser implements ProductParser {
 		}
 
 		if (LOG.isTraceEnabled()) {
-			LOG.trace(">>>> Stored product [ '{}' : {}{} ]\n\tDetails:{}", productName, price, priceCurrency, productDetails);
+			LOG.debug(">>>> Extracted product [ '{}' : {}{} ] from {} \n\tDetails:{}", productName, price, priceCurrency, url, productDetails);
 		} else {
-			LOG.debug(">>>> Stored product [ '{}' : {}{} ]", productName, price, priceCurrency);
+			LOG.info(">>>> Extracted product [ '{}' : {}{} ] from '{}'", productName, price, priceCurrency, url);
 		}
+
+		return true;
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
