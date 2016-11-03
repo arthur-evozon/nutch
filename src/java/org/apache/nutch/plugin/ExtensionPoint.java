@@ -21,103 +21,103 @@ import java.util.ArrayList;
 /**
  * The <code>ExtensionPoint</code> provide meta information of a extension
  * point.
- * 
+ *
  * @author joa23
  */
 public class ExtensionPoint {
-  private String ftId;
-  private String fName;
-  private String fSchema;
-  private ArrayList<Extension> fExtensions;
+	private String ftId;
+	private String fName;
+	private String fSchema;
+	private ArrayList<Extension> fExtensions;
 
-  /**
-   * Constructor
-   * 
-   * @param pId
-   *          unique extension point Id
-   * @param pName
-   *          name of the extension poin
-   * @param pSchema
-   *          xml schema of the extension point
-   */
-  public ExtensionPoint(String pId, String pName, String pSchema) {
-    setId(pId);
-    setName(pName);
-    setSchema(pSchema);
-    fExtensions = new ArrayList<Extension>();
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param pId     unique extension point Id
+	 * @param pName   name of the extension poin
+	 * @param pSchema xml schema of the extension point
+	 */
+	public ExtensionPoint(String pId, String pName, String pSchema) {
+		setId(pId);
+		setName(pName);
+		setSchema(pSchema);
+		fExtensions = new ArrayList<Extension>();
+	}
 
-  /**
-   * Returns the unique id of the extension point.
-   * 
-   * @return String
-   */
-  public String getId() {
-    return ftId;
-  }
+	/**
+	 * Returns the unique id of the extension point.
+	 *
+	 * @return String
+	 */
+	public String getId() {
+		return ftId;
+	}
 
-  /**
-   * Returns the name of the extension point.
-   * 
-   * @return String
-   */
-  public String getName() {
-    return fName;
-  }
+	/**
+	 * Returns the name of the extension point.
+	 *
+	 * @return String
+	 */
+	public String getName() {
+		return fName;
+	}
 
-  /**
-   * Returns a path to the xml schema of a extension point.
-   * 
-   * @return String
-   */
-  public String getSchema() {
-    return fSchema;
-  }
+	/**
+	 * Returns a path to the xml schema of a extension point.
+	 *
+	 * @return String
+	 */
+	public String getSchema() {
+		return fSchema;
+	}
 
-  /**
-   * Sets the extensionPointId.
-   * 
-   * @param pId
-   *          extension point id
-   */
-  private void setId(String pId) {
-    ftId = pId;
-  }
+	/**
+	 * Sets the extensionPointId.
+	 *
+	 * @param pId extension point id
+	 */
+	private void setId(String pId) {
+		ftId = pId;
+	}
 
-  /**
-   * Sets the extension point name.
-   * 
-   * @param pName
-   */
-  private void setName(String pName) {
-    fName = pName;
-  }
+	/**
+	 * Sets the extension point name.
+	 *
+	 * @param pName
+	 */
+	private void setName(String pName) {
+		fName = pName;
+	}
 
-  /**
-   * Sets the schema.
-   * 
-   * @param pSchema
-   */
-  private void setSchema(String pSchema) {
-    fSchema = pSchema;
-  }
+	/**
+	 * Sets the schema.
+	 *
+	 * @param pSchema
+	 */
+	private void setSchema(String pSchema) {
+		fSchema = pSchema;
+	}
 
-  /**
-   * Install a corresponding extension to this extension point.
-   * 
-   * @param extension
-   */
-  public void addExtension(Extension extension) {
-    fExtensions.add(extension);
-  }
+	/**
+	 * Install a corresponding extension to this extension point.
+	 *
+	 * @param extension
+	 */
+	public void addExtension(Extension extension) {
+		fExtensions.add(extension);
+	}
 
-  /**
-   * Returns a array of extensions that listen to this extension point
-   * 
-   * @return Extension[]
-   */
-  public Extension[] getExtensions() {
-    return fExtensions.toArray(new Extension[fExtensions.size()]);
-  }
+	/**
+	 * Returns a array of extensions that listen to this extension point
+	 *
+	 * @return Extension[]
+	 */
+	public Extension[] getExtensions() {
+		return fExtensions.toArray(new Extension[fExtensions.size()]);
+	}
 
+	@Override
+	public String toString() {
+		return "ExtensionPoint{" + "ftId='" + ftId + '\'' + ", fName='" + fName + '\'' + ", fSchema='" + fSchema + '\'' + ", fExtensions=" + fExtensions + '}';
+	}
 }

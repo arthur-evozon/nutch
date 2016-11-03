@@ -27,7 +27,6 @@ public class ProductExtractorParseFilter implements ParseFilter {
 	static final Map<String, ProductParser> PARSER_MAP = new HashMap<>();
 
 	private Configuration conf;
-	private String defaultEncoding;
 
 	static {
 		FIELDS.add(WebPage.Field.CONTENT);
@@ -76,7 +75,7 @@ public class ProductExtractorParseFilter implements ParseFilter {
 
 	@Override
 	public Parse filter(String url, WebPage page, Parse parse, HTMLMetaTags metaTags, DocumentFragment doc) {
-		String host = null;
+		String host;
 		try {
 			URL u = new URL(url);
 			host = u.getHost();
@@ -84,12 +83,14 @@ public class ProductExtractorParseFilter implements ParseFilter {
 			return parse;
 		}
 
-		LOG.trace("Loading parsers for {}", host);
-
 		ProductParser productParser = PARSER_MAP.get(host.trim().toLowerCase());
 		if (productParser != null) {
 			LOG.trace("Found parsers for {}: '{}'", host, productParser.getClass().getName());
-			productParser.parse(url, page);
+			boolean productParsed = productParser.parse(url, page);
+
+			if (productParsed) {
+				LOG.debug("Successfully parsed product for '{}'", url);
+			}
 		}
 
 		return parse;
