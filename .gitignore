@@ -1,4 +1,4 @@
-lib/**
+lib
 conf/*.txt
 conf/*.xml
 conf/hadoop-env.sh
