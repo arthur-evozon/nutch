@@ -280,10 +280,10 @@ public class InjectorJob extends NutchTool implements Tool {
 	public void setConf(Configuration conf) {
 		if (conf != null ) {
 			String pf = "plugin.folders";
-			LOG.info("\n\n\t>>> {}={}\n",pf,conf.get(pf));
+			LOG.info("\n\n\t>>> {}={}",pf,conf.get(pf));
 
 			String pi = "plugin.includes";
-			LOG.info("\n\n\t>>> {}={}\n",pi,conf.get(pi));
+			LOG.info("\n\n\t>>> {}={}",pi,conf.get(pi));
 		}
 
 		super.setConf(conf);
