@@ -61,11 +61,9 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 		host = job.get(ElasticConstants.HOST);
 		port = job.getInt(ElasticConstants.PORT, 9300);
 
-		ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder().classLoader(
-				Settings.class.getClassLoader());
+		ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder().classLoader(Settings.class.getClassLoader());
 
-		BufferedReader reader = new BufferedReader(
-				job.getConfResourceAsReader("elasticsearch.conf"));
+		BufferedReader reader = new BufferedReader(job.getConfResourceAsReader("elasticsearch.conf"));
 		String line;
 		String parts[];
 
@@ -80,8 +78,7 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 			}
 		}
 
-		if (StringUtils.isNotBlank(clusterName))
-			settingsBuilder.put("cluster.name", clusterName);
+		if (StringUtils.isNotBlank(clusterName)) settingsBuilder.put("cluster.name", clusterName);
 
 		// Set the cluster name and build the settings
 		Settings settings = settingsBuilder.build();
@@ -96,10 +93,8 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 
 		bulk = client.prepareBulk();
 		defaultIndex = job.get(ElasticConstants.INDEX, "nutch");
-		maxBulkDocs = job.getInt(ElasticConstants.MAX_BULK_DOCS,
-				DEFAULT_MAX_BULK_DOCS);
-		maxBulkLength = job.getInt(ElasticConstants.MAX_BULK_LENGTH,
-				DEFAULT_MAX_BULK_LENGTH);
+		maxBulkDocs = job.getInt(ElasticConstants.MAX_BULK_DOCS, DEFAULT_MAX_BULK_DOCS);
+		maxBulkLength = job.getInt(ElasticConstants.MAX_BULK_LENGTH, DEFAULT_MAX_BULK_LENGTH);
 	}
 
 	@Override
@@ -126,9 +121,8 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 		bulkDocs++;
 
 		if (bulkDocs >= maxBulkDocs || bulkLength >= maxBulkLength) {
-			LOG.info("Processing bulk request [docs = " + bulkDocs + ", length = "
-					+ bulkLength + ", total docs = " + indexedDocs
-					+ ", last doc in bulk = '" + id + "']");
+			LOG.info("Processing bulk request [docs = " + bulkDocs + ", length = " + bulkLength + ", total docs = " + indexedDocs + ", " +
+					"last doc in bulk = '" + id + "']");
 			// Flush the bulk of indexing requests
 			createNewBulk = true;
 			commit();
@@ -184,14 +178,12 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 			if (actionGet.hasFailures()) {
 				for (BulkItemResponse item : actionGet) {
 					if (item.isFailed()) {
-						throw new RuntimeException("First failure in bulk: "
-								+ item.getFailureMessage());
+						throw new RuntimeException("First failure in bulk: " + item.getFailureMessage());
 					}
 				}
 			}
 			long msWaited = System.currentTimeMillis() - beforeWait;
-			LOG.info("Previous took in ms " + actionGet.getTookInMillis()
-					+ ", including wait " + msWaited);
+			LOG.info("Previous took in ms " + actionGet.getTookInMillis() + ", including wait " + msWaited);
 			execute = null;
 		}
 		if (bulk != null) {
@@ -212,8 +204,7 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 	@Override
 	public void close() throws IOException {
 		// Flush pending requests
-		LOG.info("Processing remaining requests [docs = " + bulkDocs
-				+ ", length = " + bulkLength + ", total docs = " + indexedDocs + "]");
+		LOG.info("Processing remaining requests [docs = " + bulkDocs + ", length = " + bulkLength + ", total docs = " + indexedDocs + "]");
 		createNewBulk = false;
 		commit();
 		// flush one more time to finalize the last bulk
@@ -231,17 +222,12 @@ public abstract class DefaultElasticIndexWriter implements IndexWriter {
 	@Override
 	public String describe() {
 		StringBuffer sb = new StringBuffer("ProductsElasticIndexWriter\n");
-		sb.append("\t").append(ElasticConstants.CLUSTER)
-				.append(" : elastic prefix cluster\n");
+		sb.append("\t").append(ElasticConstants.CLUSTER).append(" : elastic prefix cluster\n");
 		sb.append("\t").append(ElasticConstants.HOST).append(" : hostname\n");
-		sb.append("\t").append(ElasticConstants.PORT)
-				.append(" : port  (default 9300)\n");
-		sb.append("\t").append(ElasticConstants.INDEX)
-				.append(" : elastic index command \n");
-		sb.append("\t").append(ElasticConstants.MAX_BULK_DOCS)
-				.append(" : elastic bulk index doc counts. (default 250) \n");
-		sb.append("\t").append(ElasticConstants.MAX_BULK_LENGTH)
-				.append(" : elastic bulk index length. (default 2500500 ~2.5MB)\n");
+		sb.append("\t").append(ElasticConstants.PORT).append(" : port  (default 9300)\n");
+		sb.append("\t").append(ElasticConstants.INDEX).append(" : elastic index command \n");
+		sb.append("\t").append(ElasticConstants.MAX_BULK_DOCS).append(" : elastic bulk index doc counts. (default 250) \n");
+		sb.append("\t").append(ElasticConstants.MAX_BULK_LENGTH).append(" : elastic bulk index length. (default 2500500 ~2.5MB)\n");
 		return sb.toString();
 	}
 
