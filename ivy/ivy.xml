@@ -67,6 +67,9 @@
 
     <!-- End of Hadoop Dependencies -->
 
+    <!-- neded by parse-html plugin: -->
+    <dependency org="nekohtml" name="nekohtml" rev="1.9.6.2" conf="*->default"/>
+
     <dependency org="org.apache.avro" name="avro" rev="1.8.1" conf="*->default"/>
     <dependency org="org.jsoup" name="jsoup" rev="1.8.3" conf="*->default"/>
 
