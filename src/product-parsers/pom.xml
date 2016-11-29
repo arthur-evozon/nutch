@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -18,13 +18,6 @@
             <groupId>com.evozon.mining</groupId>
             <artifactId>nutch-product-parsers-common</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.nutch</groupId>
-            <artifactId>nutch</artifactId>
-            <version>2.3.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
