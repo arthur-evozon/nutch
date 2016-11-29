@@ -25,6 +25,11 @@ public class FlancoProductParser extends DefaultProductParser implements Product
 	}
 
 	@Override
+	public boolean parse(String url, WebPage page) {
+		return super.parse(url, page);
+	}
+
+	@Override
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
 		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document, metaSelectors));
 	}
