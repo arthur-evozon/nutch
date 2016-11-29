@@ -11,13 +11,25 @@ import org.slf4j.LoggerFactory;
 public class FlancoProductParser extends DefaultProductParser implements ProductParser {
 	private static final Logger LOG = LoggerFactory.getLogger(FlancoProductParser.class);
 
+	static final String META_CONTENT_ATTR = "content";
+
+	private final String metaContentAttr;
+
+	public FlancoProductParser() {
+		this(META_CONTENT_ATTR);
+	}
+
+	public FlancoProductParser(String metaContentAttr) {
+		this.metaContentAttr = metaContentAttr;
+	}
+
 	@Override
 	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
-		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document,metaSelectors));
+		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document, metaSelectors));
 	}
 
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return ProductParserUtils.extractNthChildText(document, selector, 3).trim();
+		return ProductParserUtils.extractFirstAttrText(document, metaContentAttr, selector);
 	}
 }
