@@ -118,7 +118,8 @@ public class DefaultProductParser implements ProductParser {
 		}
 
 		if (LOG.isTraceEnabled()) {
-			LOG.debug(">>>> Extracted product [ '{}' : {}{} ] from {} \n\tDetails:{}", productName, price, priceCurrency, url, productDetails);
+			LOG.trace(">>>> Extracted product [ '{}' : {}{} ] from {} \n\tDetails:{}", productName, price, priceCurrency, url,
+					productDetails);
 		} else {
 			LOG.info(">>>> Extracted product [ '{}' : {}{} ] from '{}'", productName, price, priceCurrency, url);
 		}
