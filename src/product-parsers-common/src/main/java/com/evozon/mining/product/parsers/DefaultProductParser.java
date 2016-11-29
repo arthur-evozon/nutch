@@ -33,6 +33,9 @@ public class DefaultProductParser implements ProductParser {
 
 	Map<String, String> selectorMap = new HashMap<>();
 
+	public DefaultProductParser() {
+		initializeParser();
+	}
 	/**
 	 * The plugins typically would call this method in their static config loading process
 	 */

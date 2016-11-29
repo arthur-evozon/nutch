@@ -20,6 +20,7 @@ public class EmagProductParser extends DefaultProductParser implements ProductPa
 	}
 
 	public EmagProductParser(String... detailsNestedSelectPattern) {
+		super();
 		this.detailsNestedSelectPattern = detailsNestedSelectPattern;
 	}
 

@@ -24,6 +24,8 @@ public class EvomagProductParser extends DefaultProductParser implements Product
 	}
 
 	public EvomagProductParser(String priceTokensSeparator, String metaContentAttr, String... detailsNestedSelectPattern) {
+		super();
+
 		this.priceTokensSeparator = priceTokensSeparator;
 		this.metaContentAttr = metaContentAttr;
 		this.detailsNestedSelectPattern = detailsNestedSelectPattern;

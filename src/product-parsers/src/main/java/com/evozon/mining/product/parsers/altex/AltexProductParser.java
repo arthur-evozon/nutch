@@ -20,6 +20,7 @@ public class AltexProductParser extends DefaultProductParser implements ProductP
 	}
 
 	public AltexProductParser(String metaContentAttr) {
+		super();
 		this.metaContentAttr = metaContentAttr;
 	}
 

@@ -9,10 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntendProductParser extends DefaultProductParser implements ProductParser {
-
 	private static final Logger LOG = LoggerFactory.getLogger(IntendProductParser.class);
 
 	private static final String PRODUCT_MARKER = "Prezentare produs:";
+
+	public IntendProductParser() {
+		super();
+	}
 
 	@Override
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {

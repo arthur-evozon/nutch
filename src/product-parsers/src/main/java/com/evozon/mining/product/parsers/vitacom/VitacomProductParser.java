@@ -12,9 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VitacomProductParser extends DefaultProductParser implements com.evozon.mining.product.parsers.ProductParser {
-
 	private static final Logger LOG = LoggerFactory.getLogger(VitacomProductParser.class);
 
+	public VitacomProductParser() {
+		super();
+	}
 
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
 		String extractedPriceData = ProductParserUtils.extractFirstChildText(document.getElementsByClass(priceWholeSelector));
