@@ -38,10 +38,10 @@ public class DefaultProductParser implements ProductParser {
 	}
 
 	/**
+	 * Initialization method for the parser: here the parser can load its configuration up.
 	 * The plugins typically would call this method in their static config loading process
 	 */
-	@Override
-	public void initializeParser() {
+	protected void initializeParser() {
 		Properties p = new Properties();
 		try {
 			p.load(this.getClass().getResourceAsStream(PARSERS_CONFIGURATION_FILE));

@@ -4,11 +4,6 @@ import org.apache.nutch.storage.WebPage;
 
 public interface ProductParser {
 	/**
-	 * Initialization method for the parser: here the parser can load its configuration up
-	 */
-	void initializeParser();
-
-	/**
 	 * Callback method for the parsing process: this method gets passed the url and the WebPage
 	 * currently being parsed by the {@link org.apache.nutch.parse.ParseFilter} plugin
 	 *
