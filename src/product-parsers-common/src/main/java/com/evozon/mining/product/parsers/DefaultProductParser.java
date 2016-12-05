@@ -55,7 +55,7 @@ public class DefaultProductParser implements ProductParser {
 
 				String value = p.getProperty(key);
 				selectorMap.put(key.toLowerCase().trim(), value.trim());
-				LOG.debug(">>> '{}': loaded '{}':'{}'", this.getClass().getSimpleName(), key, value);
+				LOG.debug(">>> '{}' / [ '{}':'{}' ]", this.getClass().getSimpleName(), key, value);
 			}
 		} catch (Exception e) {
 			if (LOG.isErrorEnabled()) {
