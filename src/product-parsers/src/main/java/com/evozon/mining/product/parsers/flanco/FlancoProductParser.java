@@ -21,6 +21,8 @@ public class FlancoProductParser extends DefaultProductParser implements Product
 
 	public FlancoProductParser(String metaContentAttr) {
 		super();
+		LOG.info("Loaded up '{}'",this.getClass().getSimpleName());
+
 		this.metaContentAttr = metaContentAttr;
 	}
 

@@ -36,6 +36,7 @@ public class DefaultProductParser implements ProductParser {
 	public DefaultProductParser() {
 		initializeParser();
 	}
+
 	/**
 	 * The plugins typically would call this method in their static config loading process
 	 */
@@ -52,7 +53,9 @@ public class DefaultProductParser implements ProductParser {
 					continue;
 				}
 
-				selectorMap.put(key.toLowerCase().trim(), p.getProperty(key).trim());
+				String value = p.getProperty(key);
+				selectorMap.put(key.toLowerCase().trim(), value.trim());
+				LOG.debug(">>> '{}': loaded '{}':'{}'", this.getClass().getSimpleName(), key, value);
 			}
 		} catch (Exception e) {
 			if (LOG.isErrorEnabled()) {
