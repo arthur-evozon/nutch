@@ -7,7 +7,7 @@
     <groupId>com.evozon.mining</groupId>
     <artifactId>nutch-product-parsers</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.evozon.mining</groupId>
             <artifactId>nutch-product-parsers-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
