@@ -31,37 +31,29 @@ public class DefaultProductParser implements ProductParser {
 
 	public static final String SELECTOR_SEPARATOR = "|";
 
-	Map<String, String> selectorMap = new HashMap<>();
+	private final String productNameSelector;
+	private final String productPriceWholeSelector;
+	private final String productPricePartSelector;
+	private final String productPriceCurrencySelector;
+	private final String productDetailsSelector;
 
 	public DefaultProductParser() {
-		initializeParser();
+		Map<String, String> selectorMap = initializeParser();
+
+		productNameSelector = selectorMap.get(NAME);
+		productPriceWholeSelector = selectorMap.get(PRICE_WHOLE);
+		productPricePartSelector = selectorMap.get(PRICE_PART);
+		productPriceCurrencySelector = selectorMap.get(PRICE_CURRENCY);
+		productDetailsSelector = selectorMap.get(META);
 	}
 
-	/**
-	 * Initialization method for the parser: here the parser can load its configuration up.
-	 * The plugins typically would call this method in their static config loading process
-	 */
-	protected void initializeParser() {
-		Properties p = new Properties();
-		try {
-			p.load(this.getClass().getResourceAsStream(PARSERS_CONFIGURATION_FILE));
-			Enumeration<?> keys = p.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
-				if (StringUtils.isBlank(key) || StringUtils.isBlank(p.getProperty(key))) {
-					LOG.error("Invalid config entry '{}:{}'", key, p.getProperty(key));
-					continue;
-				}
-
-				String value = p.getProperty(key);
-				selectorMap.put(key.toLowerCase().trim(), value.trim());
-				LOG.debug(">>> '{}' / [ '{}':'{}' ]", this.getClass().getSimpleName(), key, value);
-			}
-		} catch (Exception e) {
-			if (LOG.isErrorEnabled()) {
-				LOG.error(e.toString());
-			}
-		}
+	public DefaultProductParser(String productNameSelector, String productPriceWholeSelector, String productPricePartSelector, String
+			productPriceCurrencySelector, String productDetailsSelector) {
+		this.productNameSelector = productNameSelector;
+		this.productPriceWholeSelector = productPriceWholeSelector;
+		this.productPricePartSelector = productPricePartSelector;
+		this.productPriceCurrencySelector = productPriceCurrencySelector;
+		this.productDetailsSelector = productDetailsSelector;
 	}
 
 	/**
@@ -73,13 +65,7 @@ public class DefaultProductParser implements ProductParser {
 	 */
 	@Override
 	public boolean parse(String url, WebPage page) {
-		String nameSelector = selectorMap.get(NAME);
-		String priceWholeSelector = selectorMap.get(PRICE_WHOLE);
-		String pricePartSelector = selectorMap.get(PRICE_PART);
-		String priceCurrencySelector = selectorMap.get(PRICE_CURRENCY);
-		String productDetailsSelector = selectorMap.get(META);
-
-		if (StringUtils.isBlank(nameSelector)) {
+		if (StringUtils.isBlank(productNameSelector)) {
 			return false;
 		}
 
@@ -92,17 +78,17 @@ public class DefaultProductParser implements ProductParser {
 
 		now = System.currentTimeMillis();
 
-		String productName = parseProductName(url, page, document, nameSelector);
+		String productName = parseProductName(url, page, document, productNameSelector);
 		if (StringUtils.isBlank(productName)) {
 			return false;
 		}
 
-		Double price = parseProductPrice(url, page, document, priceWholeSelector, pricePartSelector);
+		Double price = parseProductPrice(url, page, document, productPriceWholeSelector, productPricePartSelector);
 		if (price == null) {
 			return false;
 		}
 
-		String priceCurrency = parseProductPriceCurrency(url, page, document, priceCurrencySelector);
+		String priceCurrency = parseProductPriceCurrency(url, page, document, productPriceCurrencySelector);
 		if (StringUtils.isBlank(priceCurrency)) {
 			return false;
 		}
@@ -128,6 +114,56 @@ public class DefaultProductParser implements ProductParser {
 		}
 
 		return true;
+	}
+
+	public String getProductNameSelector() {
+		return productNameSelector;
+	}
+
+	public String getProductPriceWholeSelector() {
+		return productPriceWholeSelector;
+	}
+
+	public String getProductPricePartSelector() {
+		return productPricePartSelector;
+	}
+
+	public String getProductPriceCurrencySelector() {
+		return productPriceCurrencySelector;
+	}
+
+	public String getProductDetailsSelector() {
+		return productDetailsSelector;
+	}
+
+	/**
+	 * Initialization method for the parser: here the parser can load its configuration up.
+	 * The plugins typically would call this method in their static config loading process
+	 */
+	protected Map<String, String> initializeParser() {
+		Map<String, String> selectorMap = new HashMap<>();
+		Properties p = new Properties();
+		try {
+			p.load(this.getClass().getResourceAsStream(PARSERS_CONFIGURATION_FILE));
+			Enumeration<?> keys = p.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				if (StringUtils.isBlank(key) || StringUtils.isBlank(p.getProperty(key))) {
+					LOG.error("Invalid config entry '{}:{}'", key, p.getProperty(key));
+					continue;
+				}
+
+				String value = p.getProperty(key);
+				selectorMap.put(key.toLowerCase().trim(), value.trim());
+				LOG.debug(">>> '{}' / [ '{}':'{}' ]", this.getClass().getSimpleName(), key, value);
+			}
+		} catch (Exception e) {
+			if (LOG.isErrorEnabled()) {
+				LOG.error(e.toString());
+			}
+		}
+
+		return selectorMap;
 	}
 
 	protected String parseProductName(String url, WebPage page, Document document, String selector) {
