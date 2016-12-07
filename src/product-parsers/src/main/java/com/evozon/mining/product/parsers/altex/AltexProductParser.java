@@ -25,11 +25,6 @@ public class AltexProductParser extends DefaultProductParser implements ProductP
 	}
 
 	@Override
-	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
-		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document, metaSelectors));
-	}
-
-	@Override
 	protected Double parseProductPrice(String url, WebPage page, Document document, String priceWholeSelector, String pricePartSelector) {
 		String priceStr = ProductParserUtils.extractFirstAttrText(document, metaContentAttr, priceWholeSelector);
 		if (StringUtils.isBlank(priceStr)) {
@@ -37,13 +32,18 @@ public class AltexProductParser extends DefaultProductParser implements ProductP
 		}
 
 		// replace html '&nbsp;'es with " "
-		priceStr = priceStr.replaceAll("\u00a0", " ").replaceAll("[^\\d]", "");
+		priceStr = priceStr.replaceAll("\u00a0", " ").replaceAll("[^\\d.]", "");
 
 		return Double.parseDouble(priceStr);
 	}
 
 	@Override
 	protected String parseProductPriceCurrency(String url, WebPage page, Document document, String selector) {
-		return ProductParserUtils.extractFirstAttrText(document, metaContentAttr, selector);
+		return ProductParserUtils.extractFirstChildText(document, selector);
+	}
+
+	@Override
+	protected String parseProductMeta(String url, WebPage page, Document document, String metaSelectors) {
+		return ProductParserUtils.buildNameValuesString(ProductParserUtils.getAllNameValuesBySelector(document, metaSelectors));
 	}
 }

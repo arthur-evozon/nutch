@@ -47,8 +47,6 @@ public class ProductExtractorParseFilter implements ParseFilter {
 				Class c = Class.forName(implementation);
 				ProductParser productParser = (ProductParser) c.newInstance();
 
-				//productParser.initializeParser();
-
 				PARSER_MAP.put(host, productParser);
 			}
 		} catch (Exception e) {
