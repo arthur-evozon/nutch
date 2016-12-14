@@ -25,7 +25,7 @@
     <library name="antlr-runtime-3.5.jar"/>
     <library name="asm-4.1"/>
     <library name="asm-commons-4.1.jar"/>
-    <library name="nutch-product-parsers-common-1.0-SNAPSHOT.jar"/>
+    <library name="nutch-product-parsers-common-1.1-SNAPSHOT.jar"/>
   </runtime>
 
   <requires>
