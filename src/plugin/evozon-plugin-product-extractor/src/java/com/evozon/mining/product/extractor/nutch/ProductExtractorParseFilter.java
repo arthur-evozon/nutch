@@ -25,6 +25,8 @@ public class ProductExtractorParseFilter implements ParseFilter {
 	private static final Collection<WebPage.Field> FIELDS = new HashSet<>();
 	private static final List<String> htmlMimeTypes = Arrays.asList(new String[]{"text/html", "application/xhtml+xml"});
 	static final Map<String, ProductParser> PARSER_MAP = new HashMap<>();
+	static final String PROTOCOL_MARKER = "://";
+	static final String WWW_MARKER = "www.";
 
 	private Configuration conf;
 
@@ -43,6 +45,9 @@ public class ProductExtractorParseFilter implements ParseFilter {
 				}
 
 				String host = key.toLowerCase().trim();
+				host = removeSequence(host, PROTOCOL_MARKER);
+				host = removeSequence(host, WWW_MARKER);
+
 				String implementation = p.getProperty(key).trim();
 				Class c = Class.forName(implementation);
 				ProductParser productParser = (ProductParser) c.newInstance();
@@ -77,6 +82,9 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		try {
 			URL u = new URL(url);
 			host = u.getHost();
+			host = host.toLowerCase();
+			host = removeSequence(host, PROTOCOL_MARKER);
+			host = removeSequence(host, WWW_MARKER);
 		} catch (MalformedURLException e) {
 			return parse;
 		}
@@ -92,5 +100,13 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		}
 
 		return parse;
+	}
+
+	static String removeSequence(String seq, String searchSeq) {
+		if (StringUtils.contains(seq, searchSeq)) {
+			seq = StringUtils.substringAfter(seq, searchSeq);
+		}
+
+		return seq;
 	}
 }
