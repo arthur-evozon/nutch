@@ -49,10 +49,13 @@ public class ProductExtractorParseFilter implements ParseFilter {
 				host = removeSequence(host, WWW_MARKER);
 
 				String implementation = p.getProperty(key).trim();
-				Class c = Class.forName(implementation);
-				ProductParser productParser = (ProductParser) c.newInstance();
-
-				PARSER_MAP.put(host, productParser);
+				try {
+					Class c = Class.forName(implementation);
+					ProductParser productParser = (ProductParser) c.newInstance();
+					PARSER_MAP.put(host, productParser);
+				} catch (ClassNotFoundException cnfe) {
+					LOG.error(String.format("Failed to load parser < '%s' : '%s' >", host, implementation));
+				}
 			}
 		} catch (Exception e) {
 			if (LOG.isErrorEnabled()) {
@@ -108,5 +111,9 @@ public class ProductExtractorParseFilter implements ParseFilter {
 		}
 
 		return seq;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(removeSequence(removeSequence("http://www.intend.ro/", PROTOCOL_MARKER), WWW_MARKER));
 	}
 }
