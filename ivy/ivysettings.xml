@@ -56,6 +56,11 @@
                  changingPattern=".*-SNAPSHOT"
                  m2compatible="true"
         />
+        <ibiblio name="mavencentral"
+                 root="http://central.maven.org/maven2/"
+                 pattern="${maven2.pattern.ext}"
+                 m2compatible="true"
+        />
         <ibiblio name="restlet"
                  root="http://maven.restlet.org"
                  pattern="${maven2.pattern.ext}"
@@ -75,7 +80,7 @@
             <ibiblio name="central" m2compatible="true"/>
 
             <resolver ref="local"/>
-            <resolver ref="maven2"/>
+            <resolver ref="maven2"/>            
             <resolver ref="sonatype"/>
             <resolver ref="apache-snapshot"/>
             <resolver ref="restlet"/>
@@ -105,6 +110,10 @@
         <chain name="restletchain">
             <resolver ref="restlet"/>
         </chain>
+        <chain name="mavencentralchain">
+            <resolver ref="local-maven2"/>
+            <resolver ref="mavencentral"/>
+        </chain>
     </resolvers>
     <modules>
 
@@ -113,7 +122,7 @@
         rather than look for them online.
         -->
         <module organisation="org.apache.nutch" name=".*" resolver="internal"/>
-        <module organisation="org.apache.gora" name=".*" resolver="local-maven2"/>
+        <module organisation="org.apache.gora" name=".*" resolver="mavencentralchain"/>        
         <module organisation="org.apache.hbase" name=".*" resolver="local-maven2"/>
         <module organisation="org.restlet" name=".*" resolver="restletchain"/>
         <module organisation="org.restlet.jse" name=".*" resolver="restletchain"/>

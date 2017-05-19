@@ -113,11 +113,11 @@
     <!-- N.B. To use Gora SNAPSHOT's merely replace the 'ref' value with the SNAPSHOT version
     and add changing="true" alongside the dependency declaration. An example has been
     provided for the gora-core dependency as below -->
-    <dependency org="org.apache.gora" name="gora-core" rev="0.7-SNAPSHOT" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-solr" rev="0.7-SNAPSHOT" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-hbase" rev="0.7-SNAPSHOT" conf="*->default" />
-    <dependency org="org.apache.gora" name="gora-compiler-cli" rev="0.7-SNAPSHOT" conf="*->default"/>
-    <dependency org="org.apache.gora" name="gora-compiler" rev="0.7-SNAPSHOT" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-core" rev="0.7" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-solr" rev="0.6.1" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-hbase" rev="0.7" conf="*->default" />
+    <dependency org="org.apache.gora" name="gora-compiler-cli" rev="0.7" conf="*->default"/>
+    <dependency org="org.apache.gora" name="gora-compiler" rev="0.7" conf="*->default"/>
 
     <dependency org="com.evozon.mining" name="nutch-product-parsers-common" rev="1.1-SNAPSHOT" conf="*->default"/>
     <dependency org="com.evozon.mining" name="nutch-product-parsers" rev="1.1-SNAPSHOT" conf="*->default"/>
